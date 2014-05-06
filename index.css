@@ -31,3 +31,13 @@ video {
 	top: 400px;
 	left: 750px;
 }
+
+#animation_me_div {
+	position: absolute;
+	left: 1000px;
+}
+
+#animation_you_div {
+	position: absolute;
+	left: 0px;
+}
