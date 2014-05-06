@@ -35,40 +35,37 @@
 			  webrtc.joinRoom('cs247');
 			});
 
-            
+            //firebase setup            
+            fb_instance = new Firebase("https://avatar-gestures.firebaseio.com/");
 
-            fb_instance = new Firebase("https://shining-fire-6358.firebaseio.com/");
-
-            function sendhug() {
-                fb_instance.push({m: "you got hugged"});
+            function send_trigger(msg) {
+                fb_instance.push({m: msg});
             }
             
             fb_instance.on('child_added', function(snapshot){
                 console.log(snapshot.val().m);
+                fb_instance.remove();
             });
 
         	function trigger_hug() {
         		walk();
-        		console.log("hug");
-                sendhug();
+                send_trigger("hug");
         	}
 
         	function trigger_pat() {
         		walk();
-        		console.log("pat");
+                send_trigger("pat");
         	}
 
         	function trigger_kiss() {
         		walk();
-        		console.log("kiss");
+                send_trigger("kiss");
         	}
 
         	function walk() {
         		console.log("walking");
         	}
-
-
-
         </script>
+
     </body>
 </html>
