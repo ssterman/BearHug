@@ -1,6 +1,8 @@
 <html>
     <head>
-        <script src="http://simplewebrtc.com/latest.js"></script> 
+        <script src="http://simplewebrtc.com/latest.js"></script>
+          <script type="text/javascript" src="https://cdn.firebase.com/v0/firebase.js"></script>
+            <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script> 
         <link rel="stylesheet" href="index.css" type="text/css"></link>
     </head>
     <body>
@@ -17,7 +19,6 @@
         	<button type="button" onclick="trigger_kiss()">Kiss!</button>
         </div>
 
-
         <script>
 	        var webrtc = new SimpleWebRTC({
 			  // the id/element dom element that will hold "our" video
@@ -31,15 +32,25 @@
 			// we have to wait until it's ready
 			webrtc.on('readyToCall', function () {
 			  // you can name it anything
-			  webrtc.joinRoom('your awesome room name');
+			  webrtc.joinRoom('cs247');
 			});
 
-        </script>
+            
 
-        <script>
+            fb_instance = new Firebase("https://shining-fire-6358.firebaseio.com/");
+
+            function sendhug() {
+                fb_instance.push({m: "you got hugged"});
+            }
+            
+            fb_instance.on('child_added', function(snapshot){
+                console.log(snapshot.val().m);
+            });
+
         	function trigger_hug() {
         		walk();
         		console.log("hug");
+                sendhug();
         	}
 
         	function trigger_pat() {
@@ -55,6 +66,8 @@
         	function walk() {
         		console.log("walking");
         	}
+
+
 
         </script>
     </body>
