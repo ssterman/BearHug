@@ -1,0 +1,61 @@
+<html>
+    <head>
+        <script src="http://simplewebrtc.com/latest.js"></script> 
+        <link rel="stylesheet" href="index.css" type="text/css"></link>
+    </head>
+    <body>
+    	<div id="localContainer">
+        	<video id="localVideo"></video>
+        </div>
+        <div id="remoteContainer"></div>
+
+        <div id="animationContainer"></div>
+
+        <div id="buttonContainer">
+        	<button type="button" onclick="trigger_hug()">Hug!</button>
+        	<button type="button" onclick="trigger_pat()">Pat!</button>
+        	<button type="button" onclick="trigger_kiss()">Kiss!</button>
+        </div>
+
+
+        <script>
+	        var webrtc = new SimpleWebRTC({
+			  // the id/element dom element that will hold "our" video
+			  localVideoEl: 'localVideo',
+			  // the id/element dom element that will hold remote videos
+			  remoteVideosEl: 'remoteContainer',
+			  // immediately ask for camera access
+			  autoRequestMedia: true
+			});
+
+			// we have to wait until it's ready
+			webrtc.on('readyToCall', function () {
+			  // you can name it anything
+			  webrtc.joinRoom('your awesome room name');
+			});
+
+        </script>
+
+        <script>
+        	function trigger_hug() {
+        		walk();
+        		console.log("hug");
+        	}
+
+        	function trigger_pat() {
+        		walk();
+        		console.log("pat");
+        	}
+
+        	function trigger_kiss() {
+        		walk();
+        		console.log("kiss");
+        	}
+
+        	function walk() {
+        		console.log("walking");
+        	}
+
+        </script>
+    </body>
+</html>
