@@ -1,5 +1,5 @@
 
-        <script src="index.js" type="text/javascript"></script>
+        //document.body.style.background="#ffffff"; //"#f3f3f3 url('img_tree.png') no-repeat right top";
 
    var webrtc = new SimpleWebRTC({
 			  // the id/element dom element that will hold "our" video
@@ -40,7 +40,8 @@
                 var container = document.getElementById("animationContainer");
                 var me = document.getElementById("animation_me");
                 var you = document.getElementById("animation_you");
-                move(me, you);
+                animateWalk();
+                //move(me, you);
             }
 
         	function trigger_hug() {
@@ -60,15 +61,18 @@
                 var container = document.getElementById("animationContainer");
                 var me = document.getElementById("animation_me");
                 var you = document.getElementById("animation_you");
-                move(me, you);
+                //move(me, you);
+                move('#animation_me_div')
+                  .set('margin-right', 480)
+                  .end();
         	}
 
             //reference: http://www.schillmania.com/content/projects/javascript-animation-1/
-            function move(me, you) {
-                me.style.left = parseInt(me.style.left)+1+'px';
-                if (me.left != you.left) {
-                    setTimeout(move(me, you),20); // call doMove in 20msec
-                } else {
-                    me.src ="hug.gif";
-                }
-            }
+            // function move(me, you) {
+            //     me.style.left = parseInt(me.style.left)+1+'px';
+            //     if (me.left != you.left) {
+            //         setTimeout(move(me, you),20); // call doMove in 20msec
+            //     } else {
+            //         me.src ="hug.gif";
+            //     }
+            // }

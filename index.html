@@ -12,11 +12,11 @@
         <div id="remoteContainer"></div>
 
         <div id="animationContainer">
-            <div id="animation_me_div">
-                <img id="animation_me" src="wait.gif">
+            <div id="animation_me_div" class="avatar">
+                <img id="animation_me" src="standing.png" >
             </div>
-            <div id="animation_you_div">
-                <img id="animation_you" src="wait.gif">
+            <div id="animation_you_div" class="avatar">
+                <img id="animation_you" src="standing.png">
             </div>
         </div>
 
@@ -26,8 +26,11 @@
         	<button type="button" onclick="trigger_kiss()">Kiss!</button>
         </div>
 
-        <script>
-
+        <script src="move.js"></script>
+       <script>
+                     var userID = Math.floor(Math.random()*1000000);
+                     console.log(userID);
+        //document.body.style.background="#ffffff"; //"#f3f3f3 url('img_tree.png') no-repeat right top";
 
    var webrtc = new SimpleWebRTC({
               // the id/element dom element that will hold "our" video
@@ -48,78 +51,87 @@
             fb_instance = new Firebase("https://avatar-gestures.firebaseio.com/");
 
             function send_trigger(msg) {
-                fb_instance.push({m: msg});
+                fb_instance.push({m: msg, sender: userID});
             }
             
             fb_instance.on('child_added', function(snapshot){
                 var msg = snapshot.val().m;
-                console.log(msg);
+                var senderIsMe = (snapshot.val().sender == userID);
+                console.log("RECEIVED: " + msg);
+                console.log("SENDER IS ME: " + senderIsMe);
                 fb_instance.remove();
                 if (msg == "hug") {
-                    console.log("received hug and starting animation");
-                    animateHug();
+                    animateHug(senderIsMe);
                 } else if (msg == "kiss") {
-                    // animateKiss();
+                    animateKiss(senderIsMe);
                 } else if (msg == "pat") {
-                    // animatePat();
+                    animatePat(senderIsMe);
                 }
             });
 
-            function animateHug() {
-                // console.log("animating hug");
-                var container = document.getElementById("animationContainer");
-                var me = document.getElementById("animation_me_div");
-                var you = document.getElementById("animation_you_div");
-                
-                animateWalk();
-                me.src ="hug.gif";
-
-            }
 
             function trigger_hug() {
-                animateHug();
                 send_trigger("hug");
             }
 
             function trigger_pat() {
-                // send_trigger("pat");
+                send_trigger("pat");
             }
 
             function trigger_kiss() {
-                // send_trigger("kiss");
+                send_trigger("kiss");
             }
 
-            function animateWalk() {
-                // console.log("animating walking");
+            function animateHug(senderIsMe) {
                 var container = document.getElementById("animationContainer");
-                var me = document.getElementById("animation_me_div");
-                var you = document.getElementById("animation_you_div");
+                var me = document.getElementById("animation_me");
+                var you = document.getElementById("animation_you");
+                animateWalk();
+                setTimeout(function(){$("#animation_me_div").html("<img src='hugging.gif'>")}, 5000);
+                    
+            }
 
-                if (me.offsetLeft-you.offsetLeft > 0) {
-                    move(me, you, -1);
-                } else {
-                    move(me, you, 1);
-                }
+            function animateWalk(senderIsMe) {
+                console.log("walking");
+                var container = document.getElementById("animationContainer");
+                var me = document.getElementById("animation_me");
+                var you = document.getElementById("animation_you");
+                $("#animation_me_div").html("<img src='walking.gif'>");
+                move('#animation_me_div')
+                  .set('margin-left', -980)
+                  .duration('5s')
+                  .then()
+                      .rotate(-30)
+                      .scale(1.5)
+                      .pop()
+                  .end();
+                //$("#animation_me_div").html("<img src='standing.png'>");
             }
 
             //reference: http://www.schillmania.com/content/projects/javascript-animation-1/
-            function move(me, you, step) {
-                // console.log(me);
-                // console.log("LEFT", parseInt($(me).css("left")));
-                console.log(step);
-                var num = parseInt($(me).css("left")) + step;
-                $(me).css({left: num});
-                // console.log("LEFT", $(me).css("left"));
+            // function move(me, you) {
+            //     me.style.left = parseInt(me.style.left)+1+'px';
+            //     if (me.left != you.left) {
+            //         setTimeout(move(me, you),20); // call doMove in 20msec
+            //     } else {
+            //         me.src ="hug.gif";
+            //     }
+            // }
+       </script>
 
-                if (me.offsetLeft != you.offsetLeft) {
-                    // console.log("recursive call");
-                    setTimeout(move(me, you, step),20); // call doMove in 20msec
-                } 
-            }
-
-
-            </script>
-
+<!--  TESTING
+<style>
+     .box{display:block;width:50px;height:25px;background-color:#222;}
+    </style>
+     <script>
+      addEventListener('DOMContentLoaded', function(){
+        setInterval(function(){
+            move('.box').x(600).duration('1s').set('width',5).end();
+            setTimeout(function(){move('.box').x(0).duration('1s').set('width',50).end();},1000)
+        },2500)
+      }, false);
+    </script>
+    <div class="box"></div> -->
 
     </body>
 </html>

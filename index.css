@@ -8,6 +8,10 @@ video {
 	display: inline-block;
 }
 
+.avatar img, .avatar {
+	width: 80px;
+}
+
 #localContainer {
 	position: absolute;
 	left: 500px;
@@ -33,11 +37,13 @@ video {
 }
 
 #animation_me_div {
+	width: 80px;
 	position: absolute;
 	left: 1000px;
 }
 
 #animation_you_div {
+	width: 80px;
 	position: absolute;
 	left: 0px;
 }
