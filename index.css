@@ -1,11 +1,47 @@
 
 body {
 	position: relative;
+	background-color: #5fbdce;
+}
+
+.header {
+	background-color: #ffffff;
+	opacity: 50%;
+	width: 100%;
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+h1 {
+	color: #ff7c00;
+	text-align: center;
+	padding: 10px;
+	margin: 0px;
+}
+
+h3 {
+	color: #ff7c00;
+	text-align: center;
+	padding: 10px;
+	margin: 0px;
+	font-style: italic;
 }
 
 video {
 	width: 500px;
 	display: inline-block;
+}
+
+
+video {
+	border-top-style: solid;
+	border-bottom-style: solid;
+	border-width: 3px;
+	border-color: white;
+}
+
+#masterContainer {
+	position: relative;
 }
 
 .avatar img, .avatar {
@@ -15,7 +51,6 @@ video {
 #localContainer {
 	position: absolute;
 	left: 500px;
-
 }
 
 #remoteContainer {
