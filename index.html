@@ -10,7 +10,7 @@
 
         <div class="header">
             <h1> BearHug </h1>
-            <h3>Video Chat with Avatars</h3>
+            <h3>Video Chat with Physical Interactions</h3>
         </div>
 
         <div id="masterContainer">
@@ -32,19 +32,20 @@
             </div>
 
             <div id="buttonContainer">
-            	<button type="button" onclick="trigger_hug()">Hug!</button>
-            	<button type="button" onclick="trigger_pat()">Pat!</button>
-            	<button type="button" onclick="trigger_kiss()">Kiss!</button>
+            	<button type="button" id="hugBtn" onclick="trigger_hug(this)">Hug!</button>
+            	<button type="button" id="patBtn" onclick="trigger_pat(this)">Pat!</button>
+            	<button type="button" id="kissBtn" onclick="trigger_kiss(this)">Kiss!</button>
             </div>
         </div>
 
         <script src="move.js"></script>
        <script>
-                     var userID = Math.floor(Math.random()*1000000);
-                     console.log(userID);
-        //document.body.style.background="#ffffff"; //"#f3f3f3 url('img_tree.png') no-repeat right top";
-
-   var webrtc = new SimpleWebRTC({
+             var userID = Math.floor(Math.random()*1000000);
+             console.log(userID);
+             // Buttons / interactions 
+             var interactionOptions = ["#hugBtn", "#patBtn", "#kissBtn"];
+            
+            var webrtc = new SimpleWebRTC({
               // the id/element dom element that will hold "our" video
               localVideoEl: 'localVideo',
               // the id/element dom element that will hold remote videos
@@ -82,16 +83,30 @@
                 animate(senderIsMe, msg);
             });
 
+            // where option = 'enabled' or 'disabled'
+            function toggle_enable_buttons(enabled) {
+                var arrayLength = interactionOptions.length;
+                for (var i = 0; i < arrayLength; i++) {
+                    if (!enabled) {
+                        $(interactionOptions[i]).attr('disabled', 'disabled');
+                    } else {  // disabled
+                        $(interactionOptions[i]).removeAttr("disabled")
+                    }
+                }
+            }
 
-            function trigger_hug() {
+            function trigger_hug(el) {
+                toggle_enable_buttons(false);
                 send_trigger("hug");
             }
 
-            function trigger_pat() {
+            function trigger_pat(el) {
+                toggle_enable_buttons(false);
                 send_trigger("pat");
             }
 
-            function trigger_kiss() {
+            function trigger_kiss(el) {
+                toggle_enable_buttons(false);
                 send_trigger("kiss");
             }
 
@@ -146,6 +161,7 @@
                       $(senderID).html("<img src='walking.gif'>");
                       setTimeout(function(){
                          $(senderID).html("<img src='standing.png'>")
+                         toggle_enable_buttons(true); // re-enable buttons
                       }, 5000);
                   }, 9000);
 
