@@ -24,10 +24,10 @@
 
             <div id="animationContainer">
                 <div id="animation_me_div" class="avatar">
-                    <img id="animation_me" src="standing.gif" >
+                    <img id="animation_me" src="bear_stand_reversed.gif" >
                 </div>
                 <div id="animation_you_div" class="avatar">
-                    <img id="animation_you" src="standing.gif">
+                    <img id="animation_you" src="bear_stand.gif">
                 </div>
             </div>
 
@@ -126,14 +126,6 @@
                 send_trigger("kiss");
             }
 
-            // function animateHug(senderIsMe) {
-            //     var container = document.getElementById("animationContainer");
-            //     var me = document.getElementById("animation_me");
-            //     var you = document.getElementById("animation_you");
-            //     animateWalk(senderIsMe);
-            //     setTimeout(function(){$("#animation_me_div").html("<img src='hugging.gif'>")}, 5000);
-            // }
-
             function animate(senderIsMe, interactionType) {
                 console.log("walking");
                 var container = document.getElementById("animationContainer");
@@ -143,29 +135,38 @@
                 var yourLeftOffset = $("#animation_you_div").offset().left;
                 
                 if (senderIsMe) {
+                    // send the action giver to the front, receiver to the back
+                    console.log("z-index setting");
+                    $('#animation_me_div').css('z-index', 9999);
+                    $('#animation_you_div').css('z-index', 1);
                     console.log("I am sender");
                     var senderID = '#animation_me_div';
                     var displacement = yourLeftOffset-myLeftOffset;
+                    displacement = (displacement < 0) ? displacement+25 : displacement-25;
+                    var reversed = true;
                 } else { // sender is the other person
+                    // send the action giver to the front, receiver to the back
+                    console.log("other z-index setting");
+                    $('#animation_you_div').css('z-index', 9999);
+                    $('#animation_me_div').css('z-index', 1);
                     console.log("I am receiver");
                     var senderID = '#animation_you_div';
                     var displacement = myLeftOffset-yourLeftOffset;
+                    displacement = (displacement < 0) ? displacement+25 : displacement-25;
+                    var reversed = false;
                 }
-        
-                // if walking to the left, make the gif face left
-                if (displacement < 0) {
-                    $(senderID).addClass("flip");
-                }
+                console.log("Displacement: " + displacement);
+                 var reverseExtension = reversed ? "_reversed" : "";
                  move(senderID)
                   .set('margin-left', displacement)
                   .duration('5s')
-                  .then()
-                      .scale(1.5)
-                      .pop()
+                  // .then()
+                  //     .scale(1.5)
+                  //     .pop()
                   .end();
-                  $(senderID).html("<img src='walking.gif' loop='infinite'>");
+                  $(senderID).html("<img src='bear_walk"+reverseExtension+".gif'>");
 
-                  interact(interactionType, senderID);
+                  interact(interactionType, senderID, reversed);
 
                   setTimeout(function(){
                       // flip bear other way
@@ -173,9 +174,12 @@
                       .set('margin-left', 0)
                       .duration('5s')
                       .end();
-                      $(senderID).html("<img src='walking.gif' loop='infinite'>");
+
+                      var reverseExtension = reversed ? "" : "_reversed";
+                      $(senderID).html("<img src='bear_walk"+reverseExtension+".gif'>");
                       setTimeout(function(){
-                         $(senderID).html("<img src='standing.gif'>")
+                         var reverseExtension = reversed ? "_reversed" : "";
+                         $(senderID).html("<img src='bear_stand"+reverseExtension+".gif'>")
                          toggle_enable_buttons(true); // re-enable buttons
                       }, 5000);
                   }, 9000);
@@ -184,45 +188,21 @@
             }
 
             // params: interactionType eg. "hug" and who sent the hug aka which DIV does the hugging action eg. animation_you_div
-            function interact(interactionType, senderID) {
-            switch (interactionType){
-                case "hug": 
-                    setTimeout(function(){$(senderID).html("<img src='hugging.gif'>")}, 5000);
-                    break;
-                case "kiss": 
-                    setTimeout(function(){$(senderID).html("<img src='kissing.gif'>")}, 5000);
-                    break;
-                case "pat": 
-                    setTimeout(function(){$(senderID).html("<img src='patting.gif'>")}, 5000);
-                    break;
+            function interact(interactionType, senderID, reversed) {
+                var reverseExtension = reversed ? "_reversed" : "";
+                switch (interactionType){
+                    case "hug": 
+                        setTimeout(function(){$(senderID).html("<img src='bear_hug"+reverseExtension+".gif'>")}, 5000);
+                        break;
+                    case "kiss": 
+                        setTimeout(function(){$(senderID).html("<img src='bear_kiss"+reverseExtension+".gif'>")}, 5000);
+                        break;
+                    case "pat": 
+                        setTimeout(function(){$(senderID).html("<img src='bear_pat"+reverseExtension+".gif'>")}, 5000);
+                        break;
                 }
             }
-
-            //reference: http://www.schillmania.com/content/projects/javascript-animation-1/
-            // function move(me, you) {
-            //     me.style.left = parseInt(me.style.left)+1+'px';
-            //     if (me.left != you.left) {
-            //         setTimeout(move(me, you),20); // call doMove in 20msec
-            //     } else {
-            //         me.src ="hug.gif";
-            //     }
-            // }
        </script>
-
-<!--  TESTING
-<style>
-     .box{display:block;width:50px;height:25px;background-color:#222;}
-    </style>
-     <script>
-      addEventListener('DOMContentLoaded', function(){
-        setInterval(function(){
-            move('.box').x(600).duration('1s').set('width',5).end();
-            setTimeout(function(){move('.box').x(0).duration('1s').set('width',50).end();},1000)
-        },2500)
-      }, false);
-    </script>
-    <div class="box"></div> -->
 
     </body>
 </html>
->>>>>>> 97f4885b70615886052ffd273264127a2fa7bf89

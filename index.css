@@ -47,8 +47,9 @@ video {
 	position: relative;
 }
 
-.avatar img, .avatar {
-	width: 80px;
+#animation_you_div img, #animation_me_div img, .avatar {
+	width: 120px;
+	height: 180px;
 }
 
 .flip {
@@ -73,7 +74,7 @@ video {
 #animationContainer {
 	position: absolute;
 	top: 300px;
-	height: 70px;
+/*	height: 70px;*/
 	width: 1000px;
 }
 
@@ -84,13 +85,15 @@ video {
 }
 
 #animation_me_div {
-	width: 80px;
+	width: 120px;
+	height: 180px;
 	position: absolute;
 	left: 920px;
 }
 
 #animation_you_div {
-	width: 80px;
+	width: 120px;
+	height: 180px;
 	position: absolute;
 	left: 0px;
 }
