@@ -1,8 +1,8 @@
 <html>
     <head>
         <script src="http://simplewebrtc.com/latest.js"></script>
-          <script type="text/javascript" src="https://cdn.firebase.com/v0/firebase.js"></script>
-            <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script> 
+        <script type="text/javascript" src="https://cdn.firebase.com/v0/firebase.js"></script>
+        <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script> 
         <link rel="stylesheet" href="index.css" type="text/css"></link>
     </head>
     <body>
@@ -11,7 +11,14 @@
         </div>
         <div id="remoteContainer"></div>
 
-        <div id="animationContainer"></div>
+        <div id="animationContainer">
+            <div id="animation_me_div">
+                <img id="animation_me" src="wait.gif">
+            </div>
+            <div id="animation_you_div">
+                <img id="animation_you" src="wait.gif">
+            </div>
+        </div>
 
         <div id="buttonContainer">
         	<button type="button" onclick="trigger_hug()">Hug!</button>
@@ -20,20 +27,22 @@
         </div>
 
         <script>
-	        var webrtc = new SimpleWebRTC({
-			  // the id/element dom element that will hold "our" video
-			  localVideoEl: 'localVideo',
-			  // the id/element dom element that will hold remote videos
-			  remoteVideosEl: 'remoteContainer',
-			  // immediately ask for camera access
-			  autoRequestMedia: true
-			});
 
-			// we have to wait until it's ready
-			webrtc.on('readyToCall', function () {
-			  // you can name it anything
-			  webrtc.joinRoom('cs247');
-			});
+
+   var webrtc = new SimpleWebRTC({
+              // the id/element dom element that will hold "our" video
+              localVideoEl: 'localVideo',
+              // the id/element dom element that will hold remote videos
+              remoteVideosEl: 'remoteContainer',
+              // immediately ask for camera access
+              autoRequestMedia: true
+            });
+
+            // we have to wait until it's ready
+            webrtc.on('readyToCall', function () {
+              // you can name it anything
+              webrtc.joinRoom('cs247');
+            });
 
             //firebase setup            
             fb_instance = new Firebase("https://avatar-gestures.firebaseio.com/");
@@ -43,29 +52,74 @@
             }
             
             fb_instance.on('child_added', function(snapshot){
-                console.log(snapshot.val().m);
+                var msg = snapshot.val().m;
+                console.log(msg);
                 fb_instance.remove();
+                if (msg == "hug") {
+                    console.log("received hug and starting animation");
+                    animateHug();
+                } else if (msg == "kiss") {
+                    // animateKiss();
+                } else if (msg == "pat") {
+                    // animatePat();
+                }
             });
 
-        	function trigger_hug() {
-        		walk();
+            function animateHug() {
+                // console.log("animating hug");
+                var container = document.getElementById("animationContainer");
+                var me = document.getElementById("animation_me_div");
+                var you = document.getElementById("animation_you_div");
+                
+                animateWalk();
+                me.src ="hug.gif";
+
+            }
+
+            function trigger_hug() {
+                animateHug();
                 send_trigger("hug");
-        	}
+            }
 
-        	function trigger_pat() {
-        		walk();
-                send_trigger("pat");
-        	}
+            function trigger_pat() {
+                // send_trigger("pat");
+            }
 
-        	function trigger_kiss() {
-        		walk();
-                send_trigger("kiss");
-        	}
+            function trigger_kiss() {
+                // send_trigger("kiss");
+            }
 
-        	function walk() {
-        		console.log("walking");
-        	}
-        </script>
+            function animateWalk() {
+                // console.log("animating walking");
+                var container = document.getElementById("animationContainer");
+                var me = document.getElementById("animation_me_div");
+                var you = document.getElementById("animation_you_div");
+
+                if (me.offsetLeft-you.offsetLeft > 0) {
+                    move(me, you, -1);
+                } else {
+                    move(me, you, 1);
+                }
+            }
+
+            //reference: http://www.schillmania.com/content/projects/javascript-animation-1/
+            function move(me, you, step) {
+                // console.log(me);
+                // console.log("LEFT", parseInt($(me).css("left")));
+                console.log(step);
+                var num = parseInt($(me).css("left")) + step;
+                $(me).css({left: num});
+                // console.log("LEFT", $(me).css("left"));
+
+                if (me.offsetLeft != you.offsetLeft) {
+                    // console.log("recursive call");
+                    setTimeout(move(me, you, step),20); // call doMove in 20msec
+                } 
+            }
+
+
+            </script>
+
 
     </body>
 </html>
