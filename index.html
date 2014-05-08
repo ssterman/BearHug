@@ -109,6 +109,10 @@
                     var displacement = myLeftOffset-yourLeftOffset;
                 }
         
+                // if walking to the left, make the gif face left
+                if (displacement < 0) {
+                    $(senderID).addClass("flip");
+                }
                  move(senderID)
                   .set('margin-left', displacement)
                   .duration('5s')
@@ -121,13 +125,19 @@
                   interact(interactionType, senderID);
 
                   setTimeout(function(){
+                      // flip bear other way
+         
                       move(senderID)
-                      .set('margin-left', -displacement)
+                      .set('margin-left', 0)
                       .duration('5s')
                       .end();
                       $(senderID).html("<img src='walking.gif'>");
+                      setTimeout(function(){
+                         $(senderID).html("<img src='standing.png'>")
+                      }, 5000);
+                  }, 9000);
 
-                  }, 10000);
+
                   
            
                 
