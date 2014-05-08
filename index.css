@@ -2,14 +2,17 @@
 body {
 	position: relative;
 	background-color: #5fbdce;
+	background-size : 100% auto;
+	background-image:url('forest.png');
 }
 
 .header {
-	background-color: #ffffff;
-	opacity: 50%;
+	background-color: rgba(0, 0, 0, 0.3);
 	width: 100%;
 	margin-top: 20px;
 	margin-bottom: 20px;
+	font-size: 20pt;
+	font-family: 'Amatic SC';
 }
 
 h1 {
@@ -23,7 +26,7 @@ h3 {
 	color: #ff7c00;
 	text-align: center;
 	padding: 10px;
-	margin: 0px;
+	margin: -20px 0 0 0;
 	font-style: italic;
 }
 

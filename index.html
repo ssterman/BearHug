@@ -24,10 +24,10 @@
 
             <div id="animationContainer">
                 <div id="animation_me_div" class="avatar">
-                    <img id="animation_me" src="standing.png" >
+                    <img id="animation_me" src="standing.gif" >
                 </div>
                 <div id="animation_you_div" class="avatar">
-                    <img id="animation_you" src="standing.png">
+                    <img id="animation_you" src="standing.gif">
                 </div>
             </div>
 
@@ -45,6 +45,22 @@
              // Buttons / interactions 
              var interactionOptions = ["#hugBtn", "#patBtn", "#kissBtn"];
             
+
+
+
+              WebFontConfig = {
+                google: { families: [ 'Amatic+SC::latin' ] }
+              };
+              (function() {
+                var wf = document.createElement('script');
+                wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+                  '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+                wf.type = 'text/javascript';
+                wf.async = 'true';
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(wf, s);
+              })();
+
             var webrtc = new SimpleWebRTC({
               // the id/element dom element that will hold "our" video
               localVideoEl: 'localVideo',
@@ -147,30 +163,23 @@
                       .scale(1.5)
                       .pop()
                   .end();
-                  $(senderID).html("<img src='walking.gif'>");
+                  $(senderID).html("<img src='walking.gif' loop='infinite'>");
 
                   interact(interactionType, senderID);
 
                   setTimeout(function(){
                       // flip bear other way
-         
                       move(senderID)
                       .set('margin-left', 0)
                       .duration('5s')
                       .end();
-                      $(senderID).html("<img src='walking.gif'>");
+                      $(senderID).html("<img src='walking.gif' loop='infinite'>");
                       setTimeout(function(){
-                         $(senderID).html("<img src='standing.png'>")
+                         $(senderID).html("<img src='standing.gif'>")
                          toggle_enable_buttons(true); // re-enable buttons
                       }, 5000);
                   }, 9000);
-
-
-                  
-           
-                
                 // Right now just x-axis, but changing it to 2D path should be easy
-               
 
             }
 
