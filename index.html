@@ -99,32 +99,64 @@
                 // send_trigger("kiss");
             }
 
-            function animateWalk() {
-                // // console.log("animating walking");
-                // var container = document.getElementById("animationContainer");
-                // var me = document.getElementById("animation_me_div");
-                // var you = document.getElementById("animation_you_div");
+            function animate(senderIsMe, interactionType) {
+                console.log("walking");
+                var container = document.getElementById("animationContainer");
+                var me = document.getElementById("animation_me");
+                var you = document.getElementById("animation_you");
+                var myLeftOffset = $("#animation_me_div").offset().left;
+                var yourLeftOffset = $("#animation_you_div").offset().left;
+                
+                if (senderIsMe) {
+                    console.log("I am sender");
+                    var senderID = '#animation_me_div';
+                    var displacement = yourLeftOffset-myLeftOffset;
+                } else { // sender is the other person
+                    console.log("I am receiver");
+                    var senderID = '#animation_you_div';
+                    var displacement = myLeftOffset-yourLeftOffset;
+                }
+        
+                // if walking to the left, make the gif face left
+                if (displacement < 0) {
+                    $(senderID).addClass("flip");
+                }
+                 move(senderID)
+                  .set('margin-left', displacement)
+                  .duration('5s')
+                  .then()
+                      .scale(1.5)
+                      .pop()
+                  .end();
+                  $(senderID).html("<img src='walking.gif'>");
+
+                  interact(interactionType, senderID);
+
+                  setTimeout(function(){
+                      // flip bear other way
+         
+                      move(senderID)
+                      .set('margin-left', 0)
+                      .duration('5s')
+                      .end();
+                      $(senderID).html("<img src='walking.gif'>");
+                      setTimeout(function(){
+                         $(senderID).html("<img src='standing.png'>")
+                      }, 5000);
+                  }, 9000);
+
+
+                  
+           
+                
+                // Right now just x-axis, but changing it to 2D path should be easy
+               
 
                 // if (me.offsetLeft-you.offsetLeft > 0) {
                 //     move(me, you, -1);
                 // } else {
                 //     move(me, you, 1);
                 // }
-            }
-
-            //reference: http://www.schillmania.com/content/projects/javascript-animation-1/
-            function move(me, you, step) {
-                // // console.log(me);
-                // // console.log("LEFT", parseInt($(me).css("left")));
-                // console.log(step);
-                // var num = parseInt($(me).css("left")) + step;
-                // $(me).css({left: num});
-                // // console.log("LEFT", $(me).css("left"));
-
-                // if (me.offsetLeft != you.offsetLeft) {
-                //     // console.log("recursive call");
-                //     setTimeout(move(me, you, step),20); // call doMove in 20msec
-                // } 
             }
 
 
