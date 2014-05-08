@@ -60,13 +60,14 @@
                 console.log("RECEIVED: " + msg);
                 console.log("SENDER IS ME: " + senderIsMe);
                 fb_instance.remove();
-                if (msg == "hug") {
-                    animateHug(senderIsMe);
-                } else if (msg == "kiss") {
-                    animateKiss(senderIsMe);
-                } else if (msg == "pat") {
-                    animatePat(senderIsMe);
-                }
+                // if (msg == "hug") {
+                //     animateHug(senderIsMe);
+                // } else if (msg == "kiss") {
+                //     animateKiss(senderIsMe);
+                // } else if (msg == "pat") {
+                //     animatePat(senderIsMe);
+                // }
+                animate(senderIsMe, msg);
             });
 
 
@@ -82,30 +83,72 @@
                 send_trigger("kiss");
             }
 
-            function animateHug(senderIsMe) {
-                var container = document.getElementById("animationContainer");
-                var me = document.getElementById("animation_me");
-                var you = document.getElementById("animation_you");
-                animateWalk();
-                setTimeout(function(){$("#animation_me_div").html("<img src='hugging.gif'>")}, 5000);
-                    
-            }
+            // function animateHug(senderIsMe) {
+            //     var container = document.getElementById("animationContainer");
+            //     var me = document.getElementById("animation_me");
+            //     var you = document.getElementById("animation_you");
+            //     animateWalk(senderIsMe);
+            //     setTimeout(function(){$("#animation_me_div").html("<img src='hugging.gif'>")}, 5000);
+            // }
 
-            function animateWalk(senderIsMe) {
+            function animate(senderIsMe, interactionType) {
                 console.log("walking");
                 var container = document.getElementById("animationContainer");
                 var me = document.getElementById("animation_me");
                 var you = document.getElementById("animation_you");
-                $("#animation_me_div").html("<img src='walking.gif'>");
-                move('#animation_me_div')
-                  .set('margin-left', -980)
+                var myLeftOffset = $("#animation_me_div").offset().left;
+                var yourLeftOffset = $("#animation_you_div").offset().left;
+                
+                if (senderIsMe) {
+                    console.log("I am sender");
+                    var senderID = '#animation_me_div';
+                    var displacement = yourLeftOffset-myLeftOffset;
+                } else { // sender is the other person
+                    console.log("I am receiver");
+                    var senderID = '#animation_you_div';
+                    var displacement = myLeftOffset-yourLeftOffset;
+                }
+        
+                 move(senderID)
+                  .set('margin-left', displacement)
                   .duration('5s')
                   .then()
-                      .rotate(-30)
                       .scale(1.5)
                       .pop()
                   .end();
-                //$("#animation_me_div").html("<img src='standing.png'>");
+                  $(senderID).html("<img src='walking.gif'>");
+
+                  interact(interactionType, senderID);
+
+                  setTimeout(function(){
+                      move(senderID)
+                      .set('margin-left', -displacement)
+                      .duration('5s')
+                      .end();
+                      $(senderID).html("<img src='walking.gif'>");
+
+                  }, 10000);
+                  
+           
+                
+                // Right now just x-axis, but changing it to 2D path should be easy
+               
+
+            }
+
+            // params: interactionType eg. "hug" and who sent the hug aka which DIV does the hugging action eg. animation_you_div
+            function interact(interactionType, senderID) {
+            switch (interactionType){
+                case "hug": 
+                    setTimeout(function(){$(senderID).html("<img src='hugging.gif'>")}, 5000);
+                    break;
+                case "kiss": 
+                    setTimeout(function(){$(senderID).html("<img src='kissing.gif'>")}, 5000);
+                    break;
+                case "pat": 
+                    setTimeout(function(){$(senderID).html("<img src='patting.gif'>")}, 5000);
+                    break;
+                }
             }
 
             //reference: http://www.schillmania.com/content/projects/javascript-animation-1/
