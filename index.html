@@ -7,24 +7,35 @@
         <link rel="stylesheet" href="index.css" type="text/css"></link>
     </head>
     <body>
-    	<div id="localContainer">
-        	<video id="localVideo"></video>
-        </div>
-        <div id="remoteContainer"></div>
 
-        <div id="animationContainer">
-            <div id="animation_me_div" class="avatar">
-                <img id="animation_me" src="standing.png" >
-            </div>
-            <div id="animation_you_div" class="avatar">
-                <img id="animation_you" src="standing.png">
-            </div>
+        <div class="header">
+            <h1> BearHug </h1>
+            <h3>Video Chat with Avatars</h3>
         </div>
 
-        <div id="buttonContainer">
-        	<button type="button" onclick="trigger_hug()">Hug!</button>
-        	<button type="button" onclick="trigger_pat()">Pat!</button>
-        	<button type="button" onclick="trigger_kiss()">Kiss!</button>
+        <div id="masterContainer">
+
+            <div id="videoContainer">
+                <div id="localContainer">
+                	<video id="localVideo"></video>
+                </div>
+                <div id="remoteContainer"></div>
+            </div>
+
+            <div id="animationContainer">
+                <div id="animation_me_div" class="avatar">
+                    <img id="animation_me" src="standing.png" >
+                </div>
+                <div id="animation_you_div" class="avatar">
+                    <img id="animation_you" src="standing.png">
+                </div>
+            </div>
+
+            <div id="buttonContainer">
+            	<button type="button" onclick="trigger_hug()">Hug!</button>
+            	<button type="button" onclick="trigger_pat()">Pat!</button>
+            	<button type="button" onclick="trigger_kiss()">Kiss!</button>
+            </div>
         </div>
 
         <script src="move.js"></script>
