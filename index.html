@@ -10,7 +10,7 @@
 
         <div class="header">
             <h1> BearHug </h1>
-            <h3>Video Chat with Avatars</h3>
+            <h3>Video Chat with Physical Interactions</h3>
         </div>
 
         <div id="masterContainer">
@@ -24,27 +24,44 @@
 
             <div id="animationContainer">
                 <div id="animation_me_div" class="avatar">
-                    <img id="animation_me" src="standing.png" >
+                    <img id="animation_me" src="bear_stand_reversed.gif" >
                 </div>
                 <div id="animation_you_div" class="avatar">
-                    <img id="animation_you" src="standing.png">
+                    <img id="animation_you" src="bear_stand.gif">
                 </div>
             </div>
 
             <div id="buttonContainer">
-            	<button type="button" onclick="trigger_hug()">Hug!</button>
-            	<button type="button" onclick="trigger_pat()">Pat!</button>
-            	<button type="button" onclick="trigger_kiss()">Kiss!</button>
+            	<button type="button" id="hugBtn" onclick="trigger_hug(this)">Hug!</button>
+            	<button type="button" id="patBtn" onclick="trigger_pat(this)">Pat!</button>
+            	<button type="button" id="kissBtn" onclick="trigger_kiss(this)">Kiss!</button>
             </div>
         </div>
 
         <script src="move.js"></script>
        <script>
-                     var userID = Math.floor(Math.random()*1000000);
-                     console.log(userID);
-        //document.body.style.background="#ffffff"; //"#f3f3f3 url('img_tree.png') no-repeat right top";
+             var userID = Math.floor(Math.random()*1000000);
+             console.log(userID);
+             // Buttons / interactions 
+             var interactionOptions = ["#hugBtn", "#patBtn", "#kissBtn"];
+            
 
-   var webrtc = new SimpleWebRTC({
+
+
+              WebFontConfig = {
+                google: { families: [ 'Amatic+SC::latin' ] }
+              };
+              (function() {
+                var wf = document.createElement('script');
+                wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+                  '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+                wf.type = 'text/javascript';
+                wf.async = 'true';
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(wf, s);
+              })();
+
+            var webrtc = new SimpleWebRTC({
               // the id/element dom element that will hold "our" video
               localVideoEl: 'localVideo',
               // the id/element dom element that will hold remote videos
@@ -82,26 +99,32 @@
                 animate(senderIsMe, msg);
             });
 
+            // where option = 'enabled' or 'disabled'
+            function toggle_enable_buttons(enabled) {
+                var arrayLength = interactionOptions.length;
+                for (var i = 0; i < arrayLength; i++) {
+                    if (!enabled) {
+                        $(interactionOptions[i]).attr('disabled', 'disabled');
+                    } else {  // disabled
+                        $(interactionOptions[i]).removeAttr("disabled")
+                    }
+                }
+            }
 
-            function trigger_hug() {
+            function trigger_hug(el) {
+                toggle_enable_buttons(false);
                 send_trigger("hug");
             }
 
-            function trigger_pat() {
+            function trigger_pat(el) {
+                toggle_enable_buttons(false);
                 send_trigger("pat");
             }
 
-            function trigger_kiss() {
+            function trigger_kiss(el) {
+                toggle_enable_buttons(false);
                 send_trigger("kiss");
             }
-
-            // function animateHug(senderIsMe) {
-            //     var container = document.getElementById("animationContainer");
-            //     var me = document.getElementById("animation_me");
-            //     var you = document.getElementById("animation_you");
-            //     animateWalk(senderIsMe);
-            //     setTimeout(function(){$("#animation_me_div").html("<img src='hugging.gif'>")}, 5000);
-            // }
 
             function animate(senderIsMe, interactionType) {
                 console.log("walking");
@@ -112,92 +135,74 @@
                 var yourLeftOffset = $("#animation_you_div").offset().left;
                 
                 if (senderIsMe) {
+                    // send the action giver to the front, receiver to the back
+                    console.log("z-index setting");
+                    $('#animation_me_div').css('z-index', 9999);
+                    $('#animation_you_div').css('z-index', 1);
                     console.log("I am sender");
                     var senderID = '#animation_me_div';
                     var displacement = yourLeftOffset-myLeftOffset;
+                    displacement = (displacement < 0) ? displacement+25 : displacement-25;
+                    var reversed = true;
                 } else { // sender is the other person
+                    // send the action giver to the front, receiver to the back
+                    console.log("other z-index setting");
+                    $('#animation_you_div').css('z-index', 9999);
+                    $('#animation_me_div').css('z-index', 1);
                     console.log("I am receiver");
                     var senderID = '#animation_you_div';
                     var displacement = myLeftOffset-yourLeftOffset;
+                    displacement = (displacement < 0) ? displacement+25 : displacement-25;
+                    var reversed = false;
                 }
-        
-                // if walking to the left, make the gif face left
-                if (displacement < 0) {
-                    $(senderID).addClass("flip");
-                }
+                console.log("Displacement: " + displacement);
+                 var reverseExtension = reversed ? "_reversed" : "";
                  move(senderID)
                   .set('margin-left', displacement)
                   .duration('5s')
-                  .then()
-                      .scale(1.5)
-                      .pop()
+                  // .then()
+                  //     .scale(1.5)
+                  //     .pop()
                   .end();
-                  $(senderID).html("<img src='walking.gif'>");
+                  $(senderID).html("<img src='bear_walk"+reverseExtension+".gif'>");
 
-                  interact(interactionType, senderID);
+                  interact(interactionType, senderID, reversed);
 
                   setTimeout(function(){
                       // flip bear other way
-         
                       move(senderID)
                       .set('margin-left', 0)
                       .duration('5s')
                       .end();
-                      $(senderID).html("<img src='walking.gif'>");
+
+                      var reverseExtension = reversed ? "" : "_reversed";
+                      $(senderID).html("<img src='bear_walk"+reverseExtension+".gif'>");
                       setTimeout(function(){
-                         $(senderID).html("<img src='standing.png'>")
+                         var reverseExtension = reversed ? "_reversed" : "";
+                         $(senderID).html("<img src='bear_stand"+reverseExtension+".gif'>")
+                         toggle_enable_buttons(true); // re-enable buttons
                       }, 5000);
                   }, 9000);
-
-
-                  
-           
-                
                 // Right now just x-axis, but changing it to 2D path should be easy
-               
 
             }
 
             // params: interactionType eg. "hug" and who sent the hug aka which DIV does the hugging action eg. animation_you_div
-            function interact(interactionType, senderID) {
-            switch (interactionType){
-                case "hug": 
-                    setTimeout(function(){$(senderID).html("<img src='hugging.gif'>")}, 5000);
-                    break;
-                case "kiss": 
-                    setTimeout(function(){$(senderID).html("<img src='kissing.gif'>")}, 5000);
-                    break;
-                case "pat": 
-                    setTimeout(function(){$(senderID).html("<img src='patting.gif'>")}, 5000);
-                    break;
+            function interact(interactionType, senderID, reversed) {
+                var reverseExtension = reversed ? "_reversed" : "";
+                switch (interactionType){
+                    case "hug": 
+                        setTimeout(function(){$(senderID).html("<img src='bear_hug"+reverseExtension+".gif'>")}, 5000);
+                        break;
+                    case "kiss": 
+                        setTimeout(function(){$(senderID).html("<img src='bear_kiss"+reverseExtension+".gif'>")}, 5000);
+                        break;
+                    case "pat": 
+                        setTimeout(function(){$(senderID).html("<img src='bear_pat"+reverseExtension+".gif'>")}, 5000);
+                        break;
                 }
             }
-
-            //reference: http://www.schillmania.com/content/projects/javascript-animation-1/
-            // function move(me, you) {
-            //     me.style.left = parseInt(me.style.left)+1+'px';
-            //     if (me.left != you.left) {
-            //         setTimeout(move(me, you),20); // call doMove in 20msec
-            //     } else {
-            //         me.src ="hug.gif";
-            //     }
-            // }
        </script>
-
-<!--  TESTING
-<style>
-     .box{display:block;width:50px;height:25px;background-color:#222;}
-    </style>
-     <script>
-      addEventListener('DOMContentLoaded', function(){
-        setInterval(function(){
-            move('.box').x(600).duration('1s').set('width',5).end();
-            setTimeout(function(){move('.box').x(0).duration('1s').set('width',50).end();},1000)
-        },2500)
-      }, false);
-    </script>
-    <div class="box"></div> -->
 
     </body>
 </html>
->>>>>>> 97f4885b70615886052ffd273264127a2fa7bf89

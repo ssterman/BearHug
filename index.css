@@ -2,14 +2,17 @@
 body {
 	position: relative;
 	background-color: #5fbdce;
+	background-size : 100% auto;
+	background-image:url('forest.png');
 }
 
 .header {
-	background-color: #ffffff;
-	opacity: 50%;
+	background-color: rgba(0, 0, 0, 0.3);
 	width: 100%;
 	margin-top: 20px;
 	margin-bottom: 20px;
+	font-size: 20pt;
+	font-family: 'Amatic SC';
 }
 
 h1 {
@@ -23,7 +26,7 @@ h3 {
 	color: #ff7c00;
 	text-align: center;
 	padding: 10px;
-	margin: 0px;
+	margin: -20px 0 0 0;
 	font-style: italic;
 }
 
@@ -44,8 +47,9 @@ video {
 	position: relative;
 }
 
-.avatar img, .avatar {
-	width: 80px;
+#animation_you_div img, #animation_me_div img, .avatar {
+	width: 120px;
+	height: 180px;
 }
 
 .flip {
@@ -70,7 +74,7 @@ video {
 #animationContainer {
 	position: absolute;
 	top: 300px;
-	height: 70px;
+/*	height: 70px;*/
 	width: 1000px;
 }
 
@@ -81,13 +85,15 @@ video {
 }
 
 #animation_me_div {
-	width: 80px;
+	width: 120px;
+	height: 180px;
 	position: absolute;
 	left: 920px;
 }
 
 #animation_you_div {
-	width: 80px;
+	width: 120px;
+	height: 180px;
 	position: absolute;
 	left: 0px;
 }
