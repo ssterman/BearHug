@@ -1,9 +1,21 @@
-
 body {
 	position: relative;
 	background-color: #5fbdce;
 	background-size : 100% auto;
 	background-image:url('forest.png');
+}
+
+#login_container {
+	position: absolute;
+	left: 25%;
+	top: 150px;
+	background-color: white;
+	padding: 50px;
+	text-align: center;
+}
+
+#application_container {
+	display: none;
 }
 
 .header {

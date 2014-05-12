@@ -8,45 +8,79 @@
     </head>
     <body>
 
-        <div class="header">
-            <h1> BearHug </h1>
-            <h3>Video Chat with Physical Interactions</h3>
-        </div>
+    <div id="login_container">
+      <div>Welcome to BearHug!</div><br>
+      <div> Please enter your unique ID:  <input type="text" id="roomID">
+       <input type="Submit" onclick="login()">
+       </div>
+    </div>
+      
 
-        <div id="masterContainer">
+      <div id="application_container">
+          <div class="header">
+              <h1> BearHug </h1>
+              <h3>Video Chat with Physical Interactions</h3>
+          </div>
 
-            <div id="videoContainer">
-                <div id="localContainer">
-                	<video id="localVideo"></video>
-                </div>
-                <div id="remoteContainer"></div>
-            </div>
+          <div id="masterContainer">
 
-            <div id="animationContainer">
-                <div id="animation_me_div" class="avatar">
-                    <img id="animation_me" src="bear_stand_reversed.gif" >
-                </div>
-                <div id="animation_you_div" class="avatar">
-                    <img id="animation_you" src="bear_stand.gif">
-                </div>
-            </div>
+              <div id="videoContainer">
+                  <div id="localContainer">
+                  	<video id="localVideo"></video>
+                  </div>
+                  <div id="remoteContainer"></div>
+              </div>
 
-            <div id="buttonContainer">
-            	<button type="button" id="hugBtn" onclick="trigger_hug(this)">Hug!</button>
-            	<button type="button" id="patBtn" onclick="trigger_pat(this)">Pat!</button>
-            	<button type="button" id="kissBtn" onclick="trigger_kiss(this)">Kiss!</button>
-            </div>
+              <div id="animationContainer">
+                  <div id="animation_me_div" class="avatar">
+                      <img id="animation_me" src="bear_stand_reversed.gif" >
+                  </div>
+                  <div id="animation_you_div" class="avatar">
+                      <img id="animation_you" src="bear_stand.gif">
+                  </div>
+              </div>
+
+              <div id="buttonContainer">
+              	<button type="button" id="hugBtn" onclick="trigger_hug(this)">Hug!</button>
+              	<button type="button" id="patBtn" onclick="trigger_pat(this)">Pat!</button>
+              	<button type="button" id="kissBtn" onclick="trigger_kiss(this)">Kiss!</button>
+              </div>
+          </div>
         </div>
 
         <script src="move.js"></script>
        <script>
+
+            function login(uid) {
+              var roomname = 'cs247' + document.getElementById("roomID").value;
+              console.log(roomname);
+              document.getElementById("application_container").style.display = "inline";
+              document.getElementById("login_container").style.display = "none";
+
+                var webrtc = new SimpleWebRTC({
+                // the id/element dom element that will hold "our" video
+                localVideoEl: 'localVideo',
+                // the id/element dom element that will hold remote videos
+                remoteVideosEl: 'remoteContainer',
+                // immediately ask for camera access
+                autoRequestMedia: true
+              });
+
+              // we have to wait until it's ready
+              webrtc.on('readyToCall', function () {
+                // you can name it anything
+                webrtc.joinRoom(roomname);
+              });
+
+              fb_chat_room.push({r: roomname});
+              toggle_enable_buttons(true);
+            }
+
              var userID = Math.floor(Math.random()*1000000);
              console.log(userID);
              // Buttons / interactions 
              var interactionOptions = ["#hugBtn", "#patBtn", "#kissBtn"];
             
-
-
 
               WebFontConfig = {
                 google: { families: [ 'Amatic+SC::latin' ] }
@@ -61,42 +95,23 @@
                 s.parentNode.insertBefore(wf, s);
               })();
 
-            var webrtc = new SimpleWebRTC({
-              // the id/element dom element that will hold "our" video
-              localVideoEl: 'localVideo',
-              // the id/element dom element that will hold remote videos
-              remoteVideosEl: 'remoteContainer',
-              // immediately ask for camera access
-              autoRequestMedia: true
-            });
-
-            // we have to wait until it's ready
-            webrtc.on('readyToCall', function () {
-              // you can name it anything
-              webrtc.joinRoom('cs247');
-            });
-
             //firebase setup            
             fb_instance = new Firebase("https://avatar-gestures.firebaseio.com/");
+            var session_id = Math.random().toString(36).substring(7);
+            var fb_chat_room = fb_instance.child('chatrooms').child(session_id);
 
             function send_trigger(msg) {
-                fb_instance.push({m: msg, sender: userID});
+                fb_chat_room.push({m: msg, sender: userID, d: Date.now()});
             }
             
-            fb_instance.on('child_added', function(snapshot){
+            fb_chat_room.on('child_added', function(snapshot){
                 var msg = snapshot.val().m;
-                var senderIsMe = (snapshot.val().sender == userID);
-                console.log("RECEIVED: " + msg);
-                console.log("SENDER IS ME: " + senderIsMe);
-                fb_instance.remove();
-                // if (msg == "hug") {
-                //     animateHug(senderIsMe); 
-                // } else if (msg == "kiss") {
-                //     animateKiss(senderIsMe);
-                // } else if (msg == "pat") {
-                //     animatePat(senderIsMe);
-                // }
-                animate(senderIsMe, msg);
+                if (msg) {
+                  var senderIsMe = (snapshot.val().sender == userID);
+                  console.log("RECEIVED: " + msg);
+                  console.log("SENDER IS ME: " + senderIsMe);
+                  animate(senderIsMe, msg);
+              }
             });
 
             // where option = 'enabled' or 'disabled'
@@ -202,6 +217,7 @@
                         break;
                 }
             }
+
        </script>
 
     </body>
