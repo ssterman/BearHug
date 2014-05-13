@@ -51,6 +51,8 @@
         <script src="move.js"></script>
        <script>
 
+            var fb_chat_room;
+
             function login(uid) {
               var roomname = 'cs247' + document.getElementById("roomID").value;
               console.log(roomname);
@@ -72,9 +74,26 @@
                 webrtc.joinRoom(roomname);
               });
 
-              fb_chat_room.push({r: roomname});
+              //firebase setup            
+              fb_instance = new Firebase("https://avatar-gestures.firebaseio.com/");
+              //var session_id = Math.random().toString(36).substring(7);
+              fb_chat_room = fb_instance.child('chatrooms').child(roomname);
+
+              fb_chat_room.on('child_added', function(snapshot){
+                var msg = snapshot.val().m;
+                if (msg) {
+                  var senderIsMe = (snapshot.val().sender == userID);
+                  console.log("RECEIVED: " + msg);
+                  console.log("SENDER IS ME: " + senderIsMe);
+                  animate(senderIsMe, msg);
+              }
+            });
+
+              //fb_chat_room.push({r: roomname});
               toggle_enable_buttons(true);
+
             }
+
 
              var userID = Math.floor(Math.random()*1000000);
              console.log(userID);
@@ -95,24 +114,10 @@
                 s.parentNode.insertBefore(wf, s);
               })();
 
-            //firebase setup            
-            fb_instance = new Firebase("https://avatar-gestures.firebaseio.com/");
-            var session_id = Math.random().toString(36).substring(7);
-            var fb_chat_room = fb_instance.child('chatrooms').child(session_id);
-
-            function send_trigger(msg) {
-                fb_chat_room.push({m: msg, sender: userID, d: Date.now()});
-            }
-            
-            fb_chat_room.on('child_added', function(snapshot){
-                var msg = snapshot.val().m;
-                if (msg) {
-                  var senderIsMe = (snapshot.val().sender == userID);
-                  console.log("RECEIVED: " + msg);
-                  console.log("SENDER IS ME: " + senderIsMe);
-                  animate(senderIsMe, msg);
+              function send_trigger(msg) {
+                console.log('push');
+                  fb_chat_room.push({m: msg, sender: userID, d: Date.now()});
               }
-            });
 
             // where option = 'enabled' or 'disabled'
             function toggle_enable_buttons(enabled) {
@@ -217,6 +222,7 @@
                         break;
                 }
             }
+          
 
        </script>
 
