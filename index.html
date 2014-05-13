@@ -99,6 +99,7 @@
             fb_instance = new Firebase("https://avatar-gestures.firebaseio.com/");
             var session_id = Math.random().toString(36).substring(7);
             var fb_chat_room = fb_instance.child('chatrooms').child(session_id);
+            console.log("USER " + userID + " IN CHATROOM with session id: " + session_id);
 
             function send_trigger(msg) {
                 fb_chat_room.push({m: msg, sender: userID, d: Date.now()});
@@ -107,6 +108,7 @@
             fb_chat_room.on('child_added', function(snapshot){
                 var msg = snapshot.val().m;
                 if (msg) {
+                  console.log("BOTH USERS SHOULD RECEIVE THIS MESSAGE AS A PART OF CHATROOM ");
                   var senderIsMe = (snapshot.val().sender == userID);
                   console.log("RECEIVED: " + msg);
                   console.log("SENDER IS ME: " + senderIsMe);
@@ -142,6 +144,10 @@
             }
 
             function animate(senderIsMe, interactionType) {
+                // disable buttons for receiver too
+                if (!senderIsMe) {
+                  toggle_enable_buttons(false);
+                }
                 console.log("walking");
                 var container = document.getElementById("animationContainer");
                 var me = document.getElementById("animation_me");
