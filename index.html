@@ -75,9 +75,9 @@
               });
 
               //firebase setup            
-              fb_instance = new Firebase("https://avatar-gestures.firebaseio.com/");
-              //var session_id = Math.random().toString(36).substring(7);
-              fb_chat_room = fb_instance.child('chatrooms').child(roomname);
+
+              fb_chat_room =  new Firebase ("https://test-for-cs247.firebaseio.com/chatrooms/" + roomname);
+              console.log("Fb_chat_room", fb_chat_room);
 
               fb_chat_room.on('child_added', function(snapshot){
                 var msg = snapshot.val().m;
@@ -116,7 +116,7 @@
 
               function send_trigger(msg) {
                 console.log('push');
-                  fb_chat_room.push({m: msg, sender: userID, d: Date.now()});
+                  fb_chat_room.push({m: msg, sender: userID});
               }
 
             // where option = 'enabled' or 'disabled'
