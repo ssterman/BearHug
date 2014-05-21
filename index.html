@@ -120,22 +120,10 @@
                 s.parentNode.insertBefore(wf, s);
               })();
 
-              function send_trigger(msg) {
-                console.log('push');
-                  fb_chat_room.push({m: msg, sender: userID, timestamp: Date.now()});
-              }
-
-            // where option = 'enabled' or 'disabled'
-            // function toggle_enable_buttons(enabled) {
-            //     var arrayLength = interactionOptions.length;
-            //     for (var i = 0; i < arrayLength; i++) {
-            //         if (!enabled) {
-            //             $(interactionOptions[i]).attr('disabled', 'disabled');
-            //         } else {  // disabled
-            //             $(interactionOptions[i]).removeAttr("disabled")
-            //         }
-            //     }
-            // }
+            function send_trigger(msg) {
+              console.log('push');
+                fb_chat_room.push({m: msg, sender: userID, timestamp: Date.now()});
+            }
 
             function trigger_hug(el) {
               //  toggle_enable_buttons(false);
@@ -154,7 +142,7 @@
 
             function animate(senderIsMe, interactionType) {
                 // disable buttons for receiver too
-                
+
                 // if (!senderIsMe) {
                 //   toggle_enable_buttons(false);
                 // }
