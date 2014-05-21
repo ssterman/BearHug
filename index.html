@@ -34,17 +34,18 @@
               <div id="animationContainer">
                   <div id="animation_me_div" class="avatar">
                       <img id="animation_me" src="bear_stand_reversed.gif" >
+                      <div id="buttonContainer">
+                        <button type="button" id="hugBtn" onclick="hideButtons(); trigger_hug(this)">Hug!</button>
+                        <button type="button" id="patBtn" onclick="hideButtons(); trigger_pat(this)">Pat!</button>
+                        <button type="button" id="kissBtn" onclick="hideButtons(); trigger_kiss(this)">Kiss!</button>
+                      </div>
                   </div>
                   <div id="animation_you_div" class="avatar">
                       <img id="animation_you" src="bear_stand.gif">
                   </div>
               </div>
 
-              <div id="buttonContainer">
-              	<button type="button" id="hugBtn" onclick="trigger_hug(this)">Hug!</button>
-              	<button type="button" id="patBtn" onclick="trigger_pat(this)">Pat!</button>
-              	<button type="button" id="kissBtn" onclick="trigger_kiss(this)">Kiss!</button>
-              </div>
+             
           </div>
         </div>
 
@@ -151,6 +152,7 @@
                 if (!senderIsMe) {
                   toggle_enable_buttons(false);
                 }
+                hideButtons();
                 console.log("walking");
                 var container = document.getElementById("animationContainer");
                 var me = document.getElementById("animation_me");
@@ -188,7 +190,9 @@
                   //     .scale(1.5)
                   //     .pop()
                   .end();
-                  $(senderID).html("<img src='bear_walk"+reverseExtension+".gif'>");
+                  var newGif = "<img src='bear_walk"+reverseExtension+".gif'>";
+                  $(senderID).children("img").remove();
+                  $(senderID).prepend(newGif);
 
                   interact(interactionType, senderID, reversed);
 
@@ -200,11 +204,16 @@
                       .end();
 
                       var reverseExtension = reversed ? "" : "_reversed";
-                      $(senderID).html("<img src='bear_walk"+reverseExtension+".gif'>");
+                      var newGif = "<img src='bear_walk"+reverseExtension+".gif' id='animation_me' >";
+                      $(senderID).children("img").remove();
+                      $(senderID).prepend(newGif);
                       setTimeout(function(){
                          var reverseExtension = reversed ? "_reversed" : "";
-                         $(senderID).html("<img src='bear_stand"+reverseExtension+".gif'>")
-                         toggle_enable_buttons(true); // re-enable buttons
+                         var newGif = "<img src='bear_stand"+reverseExtension+".gif' id='animation_me' >";
+                         $(senderID).children("img").remove();
+                         $(senderID).prepend(newGif);
+
+                         toggle_enable_buttons(true); // re-enable buttons;
                       }, 5000);
                   }, 9000);
                 // Right now just x-axis, but changing it to 2D path should be easy
@@ -215,20 +224,55 @@
             function interact(interactionType, senderID, reversed) {
                 var reverseExtension = reversed ? "_reversed" : "";
                 switch (interactionType){
-                    case "hug": 
-                        setTimeout(function(){$(senderID).html("<img src='bear_hug"+reverseExtension+".gif'>")}, 5000);
+                    case "hug":  
+                        setTimeout(function(){
+                          var newGif = "<img src='bear_hug"+reverseExtension+".gif' id='animation_me' >";
+                          $(senderID).children("img").remove();
+                          $(senderID).prepend(newGif);
+                        }, 5000);
                         break;
                     case "kiss": 
-                        setTimeout(function(){$(senderID).html("<img src='bear_kiss"+reverseExtension+".gif'>")}, 5000);
+                        setTimeout(function(){
+                          var newGif = "<img src='bear_kiss"+reverseExtension+".gif' id='animation_me' >";
+                          $(senderID).children("img").remove();
+                          $(senderID).prepend(newGif);
+                        }, 5000);
                         break;
                     case "pat": 
-                        setTimeout(function(){$(senderID).html("<img src='bear_pat"+reverseExtension+".gif'>")}, 5000);
+                        setTimeout(function(){
+                          var newGif = "<img src='bear_pat"+reverseExtension+".gif' id='animation_me' >";
+                          $(senderID).children("img").remove();
+                          $(senderID).prepend(newGif);
+                        }, 5000);
                         break;
                 }
             }
           
+            function showButtons() {
+              $('#buttonContainer').show();
+              // bonus: do cool popup animation
+            }
+
+          
+            function hideButtons() {
+              $('#buttonContainer').css( "display", "none" );
+
+              // bonus: do cool popup animation
+            }
+
+            // On click of ME bear, button toggles hidden/displayed
+            // DIV vs IMAGE toggle button not working WIP
+            $("#animation_me_div").on("click", function(e){
+              console.log($("#buttonContainer"));
+                 var visible = $("#buttonContainer").is(":visible");
+                 console.log(visible);
+                 $("#buttonContainer").toggle( !visible ); //.scale(1.5);
+              });
+           
 
        </script>
+
+  
 
     </body>
 </html>
