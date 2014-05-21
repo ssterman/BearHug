@@ -102,7 +102,7 @@ video {
 	/*top: 300px;*/
 	height: 700px;
 	width: 1000px;
-	border:3px white dotted;
+	/*border:3px white dotted;*/
 }
 
 #buttonContainer {
@@ -125,6 +125,7 @@ video {
 	position: absolute;
 	top: 300px;
 	left: 920px;
+	transition: left 1s ease-in, top 1s ease-in;
 }
 
 #animation_you_div {
@@ -133,4 +134,5 @@ video {
 	position: absolute;
 	top: 300px;
 	left: 0px;
+	transition: left 1s ease-in, top 1s ease-in;
 }

@@ -3,6 +3,7 @@
     <head>
         <script src="http://simplewebrtc.com/latest.js"></script>
         <script type="text/javascript" src="https://cdn.firebase.com/v0/firebase.js"></script>
+        <script src="http://www.kirupa.com/prefixfree.min.js"></script>
         <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script> 
         <link rel="stylesheet" href="index.css" type="text/css"></link>
     </head>
@@ -140,6 +141,8 @@
                 send_trigger("kiss");
             }
 
+            // THIS WAS ANIMATION CHOREOGRAPHED FOR 1D linear movement 
+            /*
             function animate(senderIsMe, interactionType) {
                 // disable buttons for receiver too
 
@@ -215,6 +218,8 @@
 
             }
 
+            */
+
             // params: interactionType eg. "hug" and who sent the hug aka which DIV does the hugging action eg. animation_you_div
             function interact(interactionType, senderID, reversed) {
                 var reverseExtension = reversed ? "_reversed" : "";
@@ -250,19 +255,49 @@
 
           
             function hideButtons() {
-              $('#buttonContainer').css( "display", "none" );
+              $('#buttonContainer').css( "display", "none" ); // .hide(); // hm. weird.
 
               // bonus: do cool popup animation
             }
 
             // On click of ME bear, button toggles hidden/displayed
-            // DIV vs IMAGE toggle button not working WIP
             $("#animation_me_div").on("click", function(e){
               console.log($("#buttonContainer"));
                  var visible = $("#buttonContainer").is(":visible");
                  console.log(visible);
                  $("#buttonContainer").toggle( !visible ); //.scale(1.5);
-              });
+            });
+
+           // NOTE TO SELF: IF CLICK ON BUTTONS, DON'T MOVE BEAR
+           // BEAR GIF DEPENDING ON LEFT OR RIGHT WALK - +
+            // ME Bear 2D animation
+            var meBear = document.querySelector("#animation_me_div");
+            var container = document.querySelector("#animationContainer");
+            //var container = document.body;
+
+            container.addEventListener("click", getClickPosition, false);
+             
+            function getClickPosition(e) {
+                var parentPosition = getPosition(e.currentTarget);
+                var xPosition = e.clientX - parentPosition.x - (meBear.clientWidth / 2);
+                var yPosition = e.clientY - parentPosition.y - (meBear.clientHeight / 2);
+                 
+                meBear.style.left = xPosition + "px";
+                meBear.style.top = yPosition + "px";
+            }
+             
+            function getPosition(element) {
+                var xPosition = 0;
+                var yPosition = 0;
+                  
+                while (element) {
+                    xPosition += (element.offsetLeft - element.scrollLeft + element.clientLeft);
+                    yPosition += (element.offsetTop - element.scrollTop + element.clientTop);
+                    element = element.offsetParent;
+                }
+                return { x: xPosition, y: yPosition };
+            }
+         
            
 
        </script>
