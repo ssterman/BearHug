@@ -91,7 +91,20 @@
                     var senderIsMe = (snapshot.val().sender == userID);
                     console.log("RECEIVED: " + msg);
                     console.log("SENDER IS ME: " + senderIsMe);
-                    animate(senderIsMe, msg);
+                    
+                    // Animate gesture for sender
+                    if (senderIsMe) {
+                      var senderDivElementID = '#animation_me_div';
+                      // reversed controls which way the bear is facing when doing gesture
+                      // and is determined by checking the innerHTML of the animation me div and seeing
+                      // if there is a reversed substring (from the gif image)
+                      var innerHTML = $(senderDivElementID).html();
+                      var reversed = innerHTML.match(/reversed/) == "reversed";
+                      interact(msg, senderDivElementID, reversed);
+                    } else { // sender if not ME aka you are the RECEIVER and you need to animate the SENDER's bear
+                      // Animate gesture for receiver
+                    }
+
                   }
               }
             });
@@ -164,7 +177,7 @@
                     $('#animation_me_div').css('z-index', 9999);
                     $('#animation_you_div').css('z-index', 1);
                     console.log("I am sender");
-                    var senderID = '#animation_me_div';
+                    var senderDivElementID = '#animation_me_div';
                     var displacement = yourLeftOffset-myLeftOffset;
                     displacement = (displacement < 0) ? displacement+25 : displacement-25;
                     var reversed = true;
@@ -174,14 +187,14 @@
                     $('#animation_you_div').css('z-index', 9999);
                     $('#animation_me_div').css('z-index', 1);
                     console.log("I am receiver");
-                    var senderID = '#animation_you_div';
+                    var senderDivElementID = '#animation_you_div';
                     var displacement = myLeftOffset-yourLeftOffset;
                     displacement = (displacement < 0) ? displacement+25 : displacement-25;
                     var reversed = false;
                 }
                 console.log("Displacement: " + displacement);
                  var reverseExtension = reversed ? "_reversed" : "";
-                 move(senderID)
+                 move(senderDivElementID)
                   .set('margin-left', displacement)
                   .duration('5s')
                   // .then()
@@ -189,63 +202,49 @@
                   //     .pop()
                   .end();
                   var newGif = "<img src='bear_walk"+reverseExtension+".gif'>";
-                  $(senderID).children("img").remove();
-                  $(senderID).prepend(newGif);
+                  $(senderDivElementID).children("img").remove();
+                  $(senderDivElementID).prepend(newGif);
 
-                  interact(interactionType, senderID, reversed);
+                  interact(interactionType, senderDivElementID, reversed);
 
                   setTimeout(function(){
                       // flip bear other way
-                      move(senderID)
+                      move(senderDivElementID)
                       .set('margin-left', 0)
                       .duration('5s')
                       .end();
 
                       var reverseExtension = reversed ? "" : "_reversed";
                       var newGif = "<img src='bear_walk"+reverseExtension+".gif' id='animation_me' >";
-                      $(senderID).children("img").remove();
-                      $(senderID).prepend(newGif);
+                      $(senderDivElementID).children("img").remove();
+                      $(senderDivElementID).prepend(newGif);
                       setTimeout(function(){
                          var reverseExtension = reversed ? "_reversed" : "";
                          var newGif = "<img src='bear_stand"+reverseExtension+".gif' id='animation_me' >";
-                         $(senderID).children("img").remove();
-                         $(senderID).prepend(newGif);
+                         $(senderDivElementID).children("img").remove();
+                         $(senderDivElementID).prepend(newGif);
 
                          toggle_enable_buttons(true); // re-enable buttons;
                       }, 5000);
                   }, 9000);
                 // Right now just x-axis, but changing it to 2D path should be easy
-
             }
-
             */
 
             // params: interactionType eg. "hug" and who sent the hug aka which DIV does the hugging action eg. animation_you_div
-            function interact(interactionType, senderID, reversed) {
+            // interactionType is a string either "hug" "pat" or "kiss"
+            function interact(interactionType, senderDivElementID, reversed) {
+
                 var reverseExtension = reversed ? "_reversed" : "";
-                switch (interactionType){
-                    case "hug":  
-                        setTimeout(function(){
-                          var newGif = "<img src='bear_hug"+reverseExtension+".gif' id='animation_me' >";
-                          $(senderID).children("img").remove();
-                          $(senderID).prepend(newGif);
-                        }, 5000);
-                        break;
-                    case "kiss": 
-                        setTimeout(function(){
-                          var newGif = "<img src='bear_kiss"+reverseExtension+".gif' id='animation_me' >";
-                          $(senderID).children("img").remove();
-                          $(senderID).prepend(newGif);
-                        }, 5000);
-                        break;
-                    case "pat": 
-                        setTimeout(function(){
-                          var newGif = "<img src='bear_pat"+reverseExtension+".gif' id='animation_me' >";
-                          $(senderID).children("img").remove();
-                          $(senderID).prepend(newGif);
-                        }, 5000);
-                        break;
-                }
+                var waitGif = "<img src='bear_stand"+reverseExtension+".gif' id='animation_me' >";
+                var newGif = "<img src='bear_"+interactionType+reverseExtension+".gif' id='animation_me' >";
+                $(senderDivElementID).children("img").remove();
+                $(senderDivElementID).prepend(newGif);
+                setTimeout(function(){
+                  // Return to normal waiting pose after 5 sec
+                  $(senderDivElementID).children("img").remove();
+                  $(senderDivElementID).prepend(waitGif);
+                }, 5000);
             }
           
             function showButtons() {
@@ -255,8 +254,7 @@
 
           
             function hideButtons() {
-              $('#buttonContainer').css( "display", "none" ); // .hide(); // hm. weird.
-
+              $('#buttonContainer').css( "display", "none" ); 
               // bonus: do cool popup animation
             }
 
@@ -266,22 +264,38 @@
                  var visible = $("#buttonContainer").is(":visible");
                  console.log(visible);
                  $("#buttonContainer").toggle( !visible ); //.scale(1.5);
+
+                // Stops event from triggering the bear movement 2D movement next:
+                // if mouseclick is within the buttonContainer div, do not move bear because
+                // this means the user is just trying to click a button or hide/show button container
+                 e.stopPropagation(); 
             });
 
-           // NOTE TO SELF: IF CLICK ON BUTTONS, DON'T MOVE BEAR
-           // BEAR GIF DEPENDING ON LEFT OR RIGHT WALK - +
-            // ME Bear 2D animation
+            // The ME Bear 2D animation within the animationContainer div
             var meBear = document.querySelector("#animation_me_div");
             var container = document.querySelector("#animationContainer");
             //var container = document.body;
 
             container.addEventListener("click", getClickPosition, false);
-             
+ 
             function getClickPosition(e) {
                 var parentPosition = getPosition(e.currentTarget);
                 var xPosition = e.clientX - parentPosition.x - (meBear.clientWidth / 2);
                 var yPosition = e.clientY - parentPosition.y - (meBear.clientHeight / 2);
-                 
+                
+                // 1. Compare click position relative to bear position to see if bear will be walking fwd or backward
+                // aka reversed GIF or normal walking GIF
+                var bearCenterPosition = getCenterCoords($('#animation_me_div'));
+                var reversed = bearCenterPosition.x > e.clientX;
+                var reverseExtension = reversed ? "_reversed" : "";
+                var walkGif = "<img src='bear_walk"+reverseExtension+".gif' id='animation_me' >";
+                $('#animation_me_div').children("img").remove();
+                $('#animation_me_div').prepend(walkGif);
+                setTimeout(function(){
+                  var waitGif = "<img src='bear_stand"+reverseExtension+".gif' id='animation_me' >";
+                  $('#animation_me_div').children("img").remove();
+                  $('#animation_me_div').prepend(waitGif);
+                }, 1500);
                 meBear.style.left = xPosition + "px";
                 meBear.style.top = yPosition + "px";
             }
@@ -296,6 +310,17 @@
                     element = element.offsetParent;
                 }
                 return { x: xPosition, y: yPosition };
+            }
+
+            // get center position for an element
+            function getCenterCoords(element) {
+              var offset = element.offset();
+              var width = element.width();
+              var height = element.height();
+
+              var centerX = offset.left + width / 2;
+              var centerY = offset.top + height / 2;
+              return {x: centerX, y: centerX};
             }
          
            
