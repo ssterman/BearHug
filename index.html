@@ -83,15 +83,20 @@
               fb_chat_room.on('child_added', function(snapshot){
                 var msg = snapshot.val().m;
                 if (msg) {
-                  var senderIsMe = (snapshot.val().sender == userID);
-                  console.log("RECEIVED: " + msg);
-                  console.log("SENDER IS ME: " + senderIsMe);
-                  animate(senderIsMe, msg);
+                  //this makes it so that old messages don't get replayed if entering the same chatroom
+                  //currently on a three second window; can change that as needed
+                  var timeDifference = Date.now() - snapshot.val().timestamp;
+                  if (timeDifference < 3000) {
+                    var senderIsMe = (snapshot.val().sender == userID);
+                    console.log("RECEIVED: " + msg);
+                    console.log("SENDER IS ME: " + senderIsMe);
+                    animate(senderIsMe, msg);
+                  }
               }
             });
 
               //fb_chat_room.push({r: roomname});
-              toggle_enable_buttons(true);
+             // toggle_enable_buttons(true);
 
             }
 
@@ -117,42 +122,44 @@
 
               function send_trigger(msg) {
                 console.log('push');
-                  fb_chat_room.push({m: msg, sender: userID});
+                  fb_chat_room.push({m: msg, sender: userID, timestamp: Date.now()});
               }
 
             // where option = 'enabled' or 'disabled'
-            function toggle_enable_buttons(enabled) {
-                var arrayLength = interactionOptions.length;
-                for (var i = 0; i < arrayLength; i++) {
-                    if (!enabled) {
-                        $(interactionOptions[i]).attr('disabled', 'disabled');
-                    } else {  // disabled
-                        $(interactionOptions[i]).removeAttr("disabled")
-                    }
-                }
-            }
+            // function toggle_enable_buttons(enabled) {
+            //     var arrayLength = interactionOptions.length;
+            //     for (var i = 0; i < arrayLength; i++) {
+            //         if (!enabled) {
+            //             $(interactionOptions[i]).attr('disabled', 'disabled');
+            //         } else {  // disabled
+            //             $(interactionOptions[i]).removeAttr("disabled")
+            //         }
+            //     }
+            // }
 
             function trigger_hug(el) {
-                toggle_enable_buttons(false);
+              //  toggle_enable_buttons(false);
                 send_trigger("hug");
             }
 
             function trigger_pat(el) {
-                toggle_enable_buttons(false);
+             //   toggle_enable_buttons(false);
                 send_trigger("pat");
             }
 
             function trigger_kiss(el) {
-                toggle_enable_buttons(false);
+               // toggle_enable_buttons(false);
                 send_trigger("kiss");
             }
 
             function animate(senderIsMe, interactionType) {
                 // disable buttons for receiver too
-                if (!senderIsMe) {
-                  toggle_enable_buttons(false);
-                }
-                hideButtons();
+                
+                // if (!senderIsMe) {
+                //   toggle_enable_buttons(false);
+                // }
+                // hideButtons();
+
                 console.log("walking");
                 var container = document.getElementById("animationContainer");
                 var me = document.getElementById("animation_me");
