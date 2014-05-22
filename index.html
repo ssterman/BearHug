@@ -250,11 +250,13 @@ function login(uid) {
       $(senderDivElementID).prepend(newGif);
       var oldZIndex = $(senderDivElementID).css("z-index");
       $(senderDivElementID).css("z-index","10000");
+
+      //use these values to see if bear has moved
       var curx = $(senderDivElementID).position().left;
       var cury = $(senderDivElementID).position().top;
       setTimeout(function(){
           // Return to normal waiting pose after 5 sec
-          // if (notMoving) {
+          //check if bear has moved; only do action if in same place
             if (curx == $(senderDivElementID).position().left && cury == $(senderDivElementID).position().top) {
                   $(senderDivElementID).children("img").remove();
                   console.log("fourth stand source");
