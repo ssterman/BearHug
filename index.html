@@ -282,10 +282,12 @@ toggle_enable_buttons(true); // re-enable buttons;
       $(senderDivElementID).children("img").remove();
       $(senderDivElementID).prepend(walkGif);
       // setTimeout(function(){
+<<<<<<< HEAD
       // console.log("third stand source");
       // var waitGif = "<img src='bear_stand"+reverseExtension+".gif' id='"+imgID+"' >";
       // $(senderDivElementID).children("img").remove();
       // $(senderDivElementID).prepend(waitGif);
+
       // }, 1500);
 
         var animationEvent = whichAnimationEvent('animation_you_div');
@@ -353,12 +355,7 @@ toggle_enable_buttons(true); // re-enable buttons;
         $('#animation_me_div').prepend(walkGif);
         //put this back in
         // setTimeout(function(){
-        // console.log("stand source");
-        // var waitGif = "<img src='bear_stand"+reverseExtension+".gif' id='animation_me' >";
-        // $('#animation_me_div').children("img").remove();
-        // $('#animation_me_div').prepend(waitGif);
-        // }, 1500);
-     	
+
 
         /* Listen for a transition! */
         //this fires at the end of an animation, to turn the bear from walking to standing
@@ -371,6 +368,7 @@ toggle_enable_buttons(true); // re-enable buttons;
 
         meBear.style.left = xPosition + "px";
         meBear.style.top = yPosition + "px";
+
       }
 
       function animationListener(e, div, reverseExtension) {
