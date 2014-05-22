@@ -89,8 +89,10 @@ function login(uid) {
             console.log("RECEIVED: " + msg);
             console.log("SENDER IS ME: " + senderIsMe);
             
-            // Animate gesture for sender
-            if (senderIsMe) {
+            // Animate gesture for sender or walk to x-y coord.
+            if (msg == "walk" && !senderIsMe) { // animate YOU bear walking
+                moveToCoordinates('#animation_you_div', snapshot.val().x, snapshot.val().y);
+            } else if (senderIsMe) { // animate ME bear gesture
               var senderDivElementID = '#animation_me_div';
               // reversed controls which way the bear is facing when doing gesture
               // and is determined by checking the innerHTML of the animation me div and seeing
@@ -98,7 +100,8 @@ function login(uid) {
               var innerHTML = $(senderDivElementID).html();
               var reversed = innerHTML.match(/reversed/) == "reversed";
               interact(msg, senderDivElementID, reversed, true);
-            } else { // sender if not ME aka you are the RECEIVER and you need to animate the SENDER's bear
+            } else { // animate YOU bear gesture
+              // 'sender is not ME' aka you are the RECEIVER and you need to animate the SENDER's bear
               // TODO: Animate gesture for receiver
               var receiverDivElementID = '#animation_you_div';
               var innerHTML = $(receiverDivElementID).html();
@@ -249,6 +252,27 @@ function login(uid) {
         }, 5000);
     }
 
+    // To move receiver bear (left bear) after firebase receival of message
+    function moveToCoordinates(senderDivElementID, x, y) {
+      console.log("POS OF 'YOU' BEAR (" + x + ", " + y + ")");
+      var imgID = senderDivElementID == "#animation_you_div" ? "animation_you" : "animation_me";
+      var bear = document.querySelector(senderDivElementID);
+      var container = document.querySelector("#animationContainer");
+      var bearCenterPosition = getCenterCoords($(senderDivElementID));
+      var reversed = bearCenterPosition.x > x;
+      var reverseExtension = reversed ? "_reversed" : "";
+      var walkGif = "<img src='bear_walk"+reverseExtension+".gif' id='"+imgID+"' >";
+      $(senderDivElementID).children("img").remove();
+      $(senderDivElementID).prepend(walkGif);
+      setTimeout(function(){
+        var waitGif = "<img src='bear_stand"+reverseExtension+".gif' id='"+imgID+"' >";
+        $(senderDivElementID).children("img").remove();
+        $(senderDivElementID).prepend(waitGif);
+      }, 1500);
+      bear.style.left = x + "px"; // (x + bearCenterPosition.x) + "px";
+      bear.style.top = y + "px"; //  (y + bearCenterPosition.y) + "px";
+    }
+
     // HUG KISS PAT BUTTONS TOGGLE
     // On click of ME bear, button toggles hidden/displayed
     $("#animation_me_div").on("click", function(e){
@@ -269,12 +293,20 @@ function login(uid) {
     var container = document.querySelector("#animationContainer");
     //var container = document.body;
 
-    container.addEventListener("click", getClickPosition, false);
+    container.addEventListener("click", moveBearToClickPosition, false);
 
-    function getClickPosition(e) {
+    function moveBearToClickPosition(e) {
       var parentPosition = getPosition(e.currentTarget);
       var xPosition = e.clientX - parentPosition.x - (meBear.clientWidth / 2);
       var yPosition = e.clientY - parentPosition.y - (meBear.clientHeight / 2);
+      
+      // Push to firebase so RECEIVER can animate bear
+      //var receiverBearDisplacementX = getCenterCoords($('#animation_me_div')).x - xPosition; // x pos mirrored  
+      //var receiverBearDisplacementY = yPosition; // y pos the same
+      var receiverBearNewX = $('#animationContainer').width() - (e.clientX - parentPosition.x); // - (meBear.clientWidth / 2)); // MIRROR IMAGE
+      var receiverBearNewY = e.clientY - parentPosition.y  - (meBear.clientHeight / 2);
+      console.log('push 2D walking');
+      fb_chat_room.push({m: "walk", x: receiverBearNewX, y: receiverBearNewY, sender: userID, timestamp: Date.now()});
 
         // 1. Compare click position relative to bear position to see if bear will be walking fwd or backward
         // aka reversed GIF or normal walking GIF
