@@ -1,17 +1,17 @@
-
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <script src="http://simplewebrtc.com/latest.js"></script>
   <script type="text/javascript" src="https://cdn.firebase.com/v0/firebase.js"></script>
   <script src="http://www.kirupa.com/prefixfree.min.js"></script>
-  <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script> 
+  <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
   <link rel="stylesheet" href="index.css" type="text/css"></link>
 </head>
 <body>
 
   <div id="login_container">
     <div><h1>Welcome to BearHug!</h1></div><br>
-    <div> Please enter your unique ID:  <input type="text" id="roomID">
+    <div> Please enter your unique ID: <input type="text" id="roomID">
      <input type="Submit" onclick="login()">
    </div>
  </div>
@@ -34,10 +34,16 @@
    <div id="animationContainer">
     <div id="animation_me_div" class="avatar" onmouseover="showButtons()" onmouseout="hideButtons()">
       <img id="animation_me" src="bear_stand_reversed.gif" >
-      <div id="buttonContainer">
-        <button type="button" id="hugBtn" onclick="hideButtons(); send_gesture('hug');">Hug!</button>
+    <!--  <div id="buttonContainerPH"></div>-->
+      <div id="buttonContainer" class="buttons">
+      <div id="button_wrapper">
+      	<img src="button_hug.png" class="button" id="hugBtn" onclick="hideButtons(); send_gesture('hug');"></img>
+     	<img src="button_pat.png" class="button" id="patBtn" onclick="hideButtons(); send_gesture('pat');"></img>
+     	<img src="button_kiss.png" class="button" id="kissBtn" onclick="hideButtons(); send_gesture('kiss');"></img>
+     </div>
+       <!-- <button type="button" id="hugBtn" onclick="hideButtons(); send_gesture('hug');">Hug!</button>
         <button type="button" id="patBtn" onclick="hideButtons(); send_gesture('pat');">Pat!</button>
-        <button type="button" id="kissBtn" onclick="hideButtons(); send_gesture('kiss');">Kiss!</button>
+        <button type="button" id="kissBtn" onclick="hideButtons(); send_gesture('kiss');">Kiss!</button>-->
       </div>
     </div>
     <div id="animation_you_div" class="avatar">
@@ -73,9 +79,9 @@ function login(uid) {
         webrtc.joinRoom(roomname);
       });
 
-      //firebase setup            
+      //firebase setup
 
-      fb_chat_room =  new Firebase ("https://test-for-cs247.firebaseio.com/chatrooms/" + roomname);
+      fb_chat_room = new Firebase ("https://test-for-cs247.firebaseio.com/chatrooms/" + roomname);
       console.log("Fb_chat_room", fb_chat_room);
 
       fb_chat_room.on('child_added', function(snapshot){
@@ -121,7 +127,7 @@ function login(uid) {
 
    var userID = Math.floor(Math.random()*1000000);
    console.log(userID);
-     // Buttons / interactions 
+     // Buttons / interactions
      var interactionOptions = ["#hugBtn", "#patBtn", "#kissBtn"];
 
 
@@ -143,82 +149,81 @@ function login(uid) {
       fb_chat_room.push({m: msg, sender: userID, timestamp: Date.now()});
     }
 
-    // NOW STALE: THIS WAS ANIMATION CHOREOGRAPHED FOR 1D linear movement 
+    // NOW STALE: THIS WAS ANIMATION CHOREOGRAPHED FOR 1D linear movement
     /*
-    function animate(senderIsMe, interactionType) {
-        // disable buttons for receiver too
+function animate(senderIsMe, interactionType) {
+// disable buttons for receiver too
 
-        // if (!senderIsMe) {
-        //   toggle_enable_buttons(false);
-        // }
-        // hideButtons();
+// if (!senderIsMe) {
+// toggle_enable_buttons(false);
+// }
+// hideButtons();
 
-        console.log("walking");
-        var container = document.getElementById("animationContainer");
-        var me = document.getElementById("animation_me");
-        var you = document.getElementById("animation_you");
-        var myLeftOffset = $("#animation_me_div").offset().left;
-        var yourLeftOffset = $("#animation_you_div").offset().left;
-        
-        if (senderIsMe) {
-            // send the action giver to the front, receiver to the back
-            console.log("z-index setting");
-            $('#animation_me_div').css('z-index', 9999);
-            $('#animation_you_div').css('z-index', 1);
-            console.log("I am sender");
-            var senderDivElementID = '#animation_me_div';
-            var displacement = yourLeftOffset-myLeftOffset;
-            displacement = (displacement < 0) ? displacement+25 : displacement-25;
-            var reversed = true;
-        } else { // sender is the other person
-            // send the action giver to the front, receiver to the back
-            console.log("other z-index setting");
-            $('#animation_you_div').css('z-index', 9999);
-            $('#animation_me_div').css('z-index', 1);
-            console.log("I am receiver");
-            var senderDivElementID = '#animation_you_div';
-            var displacement = myLeftOffset-yourLeftOffset;
-            displacement = (displacement < 0) ? displacement+25 : displacement-25;
-            var reversed = false;
-        }
-        console.log("Displacement: " + displacement);
-         var reverseExtension = reversed ? "_reversed" : "";
-         move(senderDivElementID)
-          .set('margin-left', displacement)
-          .duration('5s')
-          // .then()
-          //     .scale(1.5)
-          //     .pop()
-          .end();
-          var newGif = "<img src='bear_walk"+reverseExtension+".gif'>";
-          $(senderDivElementID).children("img").remove();
-          $(senderDivElementID).prepend(newGif);
+console.log("walking");
+var container = document.getElementById("animationContainer");
+var me = document.getElementById("animation_me");
+var you = document.getElementById("animation_you");
+var myLeftOffset = $("#animation_me_div").offset().left;
+var yourLeftOffset = $("#animation_you_div").offset().left;
+if (senderIsMe) {
+// send the action giver to the front, receiver to the back
+console.log("z-index setting");
+$('#animation_me_div').css('z-index', 9999);
+$('#animation_you_div').css('z-index', 1);
+console.log("I am sender");
+var senderDivElementID = '#animation_me_div';
+var displacement = yourLeftOffset-myLeftOffset;
+displacement = (displacement < 0) ? displacement+25 : displacement-25;
+var reversed = true;
+} else { // sender is the other person
+// send the action giver to the front, receiver to the back
+console.log("other z-index setting");
+$('#animation_you_div').css('z-index', 9999);
+$('#animation_me_div').css('z-index', 1);
+console.log("I am receiver");
+var senderDivElementID = '#animation_you_div';
+var displacement = myLeftOffset-yourLeftOffset;
+displacement = (displacement < 0) ? displacement+25 : displacement-25;
+var reversed = false;
+}
+console.log("Displacement: " + displacement);
+var reverseExtension = reversed ? "_reversed" : "";
+move(senderDivElementID)
+.set('margin-left', displacement)
+.duration('5s')
+// .then()
+// .scale(1.5)
+// .pop()
+.end();
+var newGif = "<img src='bear_walk"+reverseExtension+".gif'>";
+$(senderDivElementID).children("img").remove();
+$(senderDivElementID).prepend(newGif);
 
-          interact(interactionType, senderDivElementID, reversed);
+interact(interactionType, senderDivElementID, reversed);
 
-          setTimeout(function(){
-              // flip bear other way
-              move(senderDivElementID)
-              .set('margin-left', 0)
-              .duration('5s')
-              .end();
+setTimeout(function(){
+// flip bear other way
+move(senderDivElementID)
+.set('margin-left', 0)
+.duration('5s')
+.end();
 
-              var reverseExtension = reversed ? "" : "_reversed";
-              var newGif = "<img src='bear_walk"+reverseExtension+".gif' id='animation_me' >";
-              $(senderDivElementID).children("img").remove();
-              $(senderDivElementID).prepend(newGif);
-              setTimeout(function(){
-                 var reverseExtension = reversed ? "_reversed" : "";
-                 var newGif = "<img src='bear_stand"+reverseExtension+".gif' id='animation_me' >";
-                 $(senderDivElementID).children("img").remove();
-                 $(senderDivElementID).prepend(newGif);
+var reverseExtension = reversed ? "" : "_reversed";
+var newGif = "<img src='bear_walk"+reverseExtension+".gif' id='animation_me' >";
+$(senderDivElementID).children("img").remove();
+$(senderDivElementID).prepend(newGif);
+setTimeout(function(){
+var reverseExtension = reversed ? "_reversed" : "";
+var newGif = "<img src='bear_stand"+reverseExtension+".gif' id='animation_me' >";
+$(senderDivElementID).children("img").remove();
+$(senderDivElementID).prepend(newGif);
 
-                 toggle_enable_buttons(true); // re-enable buttons;
-              }, 5000);
-          }, 9000);
-        // Right now just x-axis, but changing it to 2D path should be easy
-    }
-    */
+toggle_enable_buttons(true); // re-enable buttons;
+}, 5000);
+}, 9000);
+// Right now just x-axis, but changing it to 2D path should be easy
+}
+*/
 
     function showButtons() {
       $('#buttonContainer').show();
@@ -226,16 +231,16 @@ function login(uid) {
     }
 
     function hideButtons() {
-      $('#buttonContainer').css( "display", "none" ); 
+      $('#buttonContainer').css( "display", "none" );
       // bonus: do cool popup animation
     }
 
     // var notMoving = true;
 
     // FUNCTION INTERACT
-    // params: 
+    // params:
     // * interactionType eg. "hug" and who sent the hug aka which DIV does the hugging action eg. animation_you_div
-    //    interactionType is a string either "hug" "pat" or "kiss"
+    // interactionType is a string either "hug" "pat" or "kiss"
     // * senderDivElement ID: either 'animation_me_div' or 'animation_you_div' div that holds the animated bear
     // * reversed: if bear is reversed (facing left) or normal (facing right)
     // * senderIsMe: did you send this interaction (right bear) or are you the receiver of it (left bear)
@@ -280,10 +285,11 @@ function login(uid) {
       $(senderDivElementID).children("img").remove();
       $(senderDivElementID).prepend(walkGif);
       // setTimeout(function(){
-      //   console.log("third stand source");
-      //   var waitGif = "<img src='bear_stand"+reverseExtension+".gif' id='"+imgID+"' >";
-      //   $(senderDivElementID).children("img").remove();
-      //   $(senderDivElementID).prepend(waitGif);
+      // console.log("third stand source");
+      // var waitGif = "<img src='bear_stand"+reverseExtension+".gif' id='"+imgID+"' >";
+      // $(senderDivElementID).children("img").remove();
+      // $(senderDivElementID).prepend(waitGif);
+
       // }, 1500);
 
         var animationEvent = whichAnimationEvent('animation_you_div');
@@ -294,21 +300,21 @@ function login(uid) {
         });
 
       bear.style.left = x + "px"; // (x + bearCenterPosition.x) + "px";
-      bear.style.top = y + "px"; //  (y + bearCenterPosition.y) + "px";
+      bear.style.top = y + "px"; // (y + bearCenterPosition.y) + "px";
     }
 
     // HUG KISS PAT BUTTONS TOGGLE
     // On click of ME bear, button toggles hidden/displayed
     $("#animation_me_div").on("click", function(e){
       console.log($("#buttonContainer"));
-      var visible = $("#buttonContainer").is(":visible");
+     /* var visible = $("#buttonContainer").is(":visible");
       console.log(visible);
-         $("#buttonContainer").toggle( !visible ); //.scale(1.5);
+         $("#buttonContainer").toggle( !visible ); //.scale(1.5);*/
 
         // Stops event from triggering the bear movement 2D movement next:
         // if mouseclick is within the buttonContainer div, do not move bear because
         // this means the user is just trying to click a button or hide/show button container
-        e.stopPropagation(); 
+        e.stopPropagation();
       });
 
     // CODE FOR CONTROLLING "ME" BEAR 2D ANIMATION ON MOUSE CLICK
@@ -328,10 +334,10 @@ function login(uid) {
       var yPosition = e.clientY - parentPosition.y - (meBear.clientHeight / 2);
       
       // Push to firebase so RECEIVER can animate bear
-      //var receiverBearDisplacementX = getCenterCoords($('#animation_me_div')).x - xPosition; // x pos mirrored  
+      //var receiverBearDisplacementX = getCenterCoords($('#animation_me_div')).x - xPosition; // x pos mirrored
       //var receiverBearDisplacementY = yPosition; // y pos the same
       var receiverBearNewX = $('#animationContainer').width() - (e.clientX - parentPosition.x); // - (meBear.clientWidth / 2)); // MIRROR IMAGE
-      var receiverBearNewY = e.clientY - parentPosition.y  - (meBear.clientHeight / 2);
+      var receiverBearNewY = e.clientY - parentPosition.y - (meBear.clientHeight / 2);
       console.log('push 2D walking');
       fb_chat_room.push({m: "walk", x: receiverBearNewX, y: receiverBearNewY, sender: userID, timestamp: Date.now()});
 
@@ -351,12 +357,7 @@ function login(uid) {
         $('#animation_me_div').prepend(walkGif);
         //put this back in
         // setTimeout(function(){
-        //   console.log("stand source");
-        //   var waitGif = "<img src='bear_stand"+reverseExtension+".gif' id='animation_me' >";
-        //   $('#animation_me_div').children("img").remove();
-        //   $('#animation_me_div').prepend(waitGif);
-        // }, 1500);
-     
+
 
         /* Listen for a transition! */
         //this fires at the end of an animation, to turn the bear from walking to standing
@@ -369,13 +370,14 @@ function login(uid) {
 
         meBear.style.left = xPosition + "px";
         meBear.style.top = yPosition + "px";
+
       }
 
       function animationListener(e, div, reverseExtension) {
-          console.log('Transition complete!  This is the callback, no library needed!');
+          console.log('Transition complete! This is the callback, no library needed!');
           var waitGif = "<img src='bear_stand"+reverseExtension+".gif' id='animation_me' >";
-          $('#animation_me_div').children("img").remove();
-          $('#animation_me_div').prepend(waitGif);
+          $(div).children("img").remove();
+          $(div).prepend(waitGif);
           // notMoving = true;
           document.removeEventListener(e, animationListener);
         }
