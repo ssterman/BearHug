@@ -32,7 +32,7 @@
    </div>
 
    <div id="animationContainer">
-    <div id="animation_me_div" class="avatar">
+    <div id="animation_me_div" class="avatar" onmouseover="showButtons()" onmouseout="hideButtons()">
       <img id="animation_me" src="bear_stand_reversed.gif" >
       <div id="buttonContainer">
         <button type="button" id="hugBtn" onclick="hideButtons(); send_gesture('hug');">Hug!</button>
@@ -245,10 +245,13 @@ function login(uid) {
       var newGif = "<img src='bear_"+interactionType+reverseExtension+".gif' id='"+imgID+"' >";
       $(senderDivElementID).children("img").remove();
       $(senderDivElementID).prepend(newGif);
+      var oldZIndex = $(senderDivElementID).css("z-index");
+      $(senderDivElementID).css("z-index","10000");
       setTimeout(function(){
           // Return to normal waiting pose after 5 sec
           $(senderDivElementID).children("img").remove();
           $(senderDivElementID).prepend(waitGif);
+          $(senderDivElementID).css("z-index",oldZIndex);
         }, 5000);
     }
 
