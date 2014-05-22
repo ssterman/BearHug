@@ -241,18 +241,30 @@ function login(uid) {
       console.log("INTERACTING...");
       var reverseExtension = reversed ? "_reversed" : "";
       var imgID = senderIsMe ? "animation_me" : "animation_you";
+      console.log("second stand source");
       var waitGif = "<img src='bear_stand"+reverseExtension+".gif' id='"+imgID+"' >";
       var newGif = "<img src='bear_"+interactionType+reverseExtension+".gif' id='"+imgID+"' >";
       $(senderDivElementID).children("img").remove();
       $(senderDivElementID).prepend(newGif);
       var oldZIndex = $(senderDivElementID).css("z-index");
       $(senderDivElementID).css("z-index","10000");
-      setTimeout(function(){
-          // Return to normal waiting pose after 5 sec
-          $(senderDivElementID).children("img").remove();
-          $(senderDivElementID).prepend(waitGif);
-          $(senderDivElementID).css("z-index",oldZIndex);
-        }, 5000);
+      // setTimeout(function(){
+      //     // Return to normal waiting pose after 5 sec
+      //     $(senderDivElementID).children("img").remove();
+      //     console.log("fourth stand source");
+      //     $(senderDivElementID).prepend(waitGif);
+      //     $(senderDivElementID).css("z-index",oldZIndex);
+      //   }, 5000);
+        /* Listen for a transition! */
+        //this fires at the end of an animation, to turn the bear from walking to standing
+
+        var animationEvent = whichAnimationEvent('animation_you_div');
+        console.log("animationEvent", animationEvent);
+        document.addEventListener(animationEvent, function() {
+          animationListener(animationEvent, 'animation_you_div', reverseExtension);
+          document.removeEventListener(animationEvent, arguments.callee);
+        });
+
     }
 
     // To move receiver bear (left bear) after firebase receival of message
@@ -268,6 +280,7 @@ function login(uid) {
       $(senderDivElementID).children("img").remove();
       $(senderDivElementID).prepend(walkGif);
       setTimeout(function(){
+        console.log("third stand source");
         var waitGif = "<img src='bear_stand"+reverseExtension+".gif' id='"+imgID+"' >";
         $(senderDivElementID).children("img").remove();
         $(senderDivElementID).prepend(waitGif);
@@ -298,6 +311,8 @@ function login(uid) {
 
     container.addEventListener("click", moveBearToClickPosition, false);
 
+
+
     function moveBearToClickPosition(e) {
       var parentPosition = getPosition(e.currentTarget);
       var xPosition = e.clientX - parentPosition.x - (meBear.clientWidth / 2);
@@ -315,18 +330,65 @@ function login(uid) {
         // aka reversed GIF or normal walking GIF
         var bearCenterPosition = getCenterCoords($('#animation_me_div'));
         var reversed = bearCenterPosition.x > e.clientX;
+
+        console.log("YOOOOO");
+        console.log(bearCenterPosition.x, e.clientX);
+
+
         var reverseExtension = reversed ? "_reversed" : "";
+        console.log("walk source");
         var walkGif = "<img src='bear_walk"+reverseExtension+".gif' id='animation_me' >";
         $('#animation_me_div').children("img").remove();
         $('#animation_me_div').prepend(walkGif);
-        setTimeout(function(){
-          var waitGif = "<img src='bear_stand"+reverseExtension+".gif' id='animation_me' >";
-          $('#animation_me_div').children("img").remove();
-          $('#animation_me_div').prepend(waitGif);
-        }, 1500);
+        //put this back in
+        // setTimeout(function(){
+        //   console.log("stand source");
+        //   var waitGif = "<img src='bear_stand"+reverseExtension+".gif' id='animation_me' >";
+        //   $('#animation_me_div').children("img").remove();
+        //   $('#animation_me_div').prepend(waitGif);
+        // }, 1500);
+     
+
+        /* Listen for a transition! */
+        //this fires at the end of an animation, to turn the bear from walking to standing
+        var animationEvent = whichAnimationEvent('animation_me_div');
+        console.log("animationEvent", animationEvent);
+        document.addEventListener(animationEvent, function() {
+          animationListener(animationEvent, 'animation_me_div', reverseExtension);
+          document.removeEventListener(animationEvent, arguments.callee);
+        });
+
         meBear.style.left = xPosition + "px";
         meBear.style.top = yPosition + "px";
       }
+
+      function animationListener(e, div, reverseExtension) {
+          console.log('Transition complete!  This is the callback, no library needed!');
+          var waitGif = "<img src='bear_stand"+reverseExtension+".gif' id='animation_me' >";
+          $('#animation_me_div').children("img").remove();
+          $('#animation_me_div').prepend(waitGif);
+          document.removeEventListener(e, animationListener);
+        }
+
+      /* From Modernizr */
+      //http://davidwalsh.name/css-animation-callback
+      function whichAnimationEvent(div){
+          var a;
+          var el = document.getElementById(div);
+          var animations = {
+            'transition':'transitionend',
+            'OTransition':'oTransitionEnd',
+            'MozTransition':'transitionend',
+            'WebkitTransition':'webkitTransitionEnd'
+          }
+
+          for(a in animations){
+              if( el.style[a] !== undefined ){
+                  return animations[a];
+              }
+          }
+      }
+
 
       function getPosition(element) {
         var xPosition = 0;
