@@ -230,6 +230,8 @@ function login(uid) {
       // bonus: do cool popup animation
     }
 
+    // var notMoving = true;
+
     // FUNCTION INTERACT
     // params: 
     // * interactionType eg. "hug" and who sent the hug aka which DIV does the hugging action eg. animation_you_div
@@ -248,27 +250,23 @@ function login(uid) {
       $(senderDivElementID).prepend(newGif);
       var oldZIndex = $(senderDivElementID).css("z-index");
       $(senderDivElementID).css("z-index","10000");
-      // setTimeout(function(){
-      //     // Return to normal waiting pose after 5 sec
-      //     $(senderDivElementID).children("img").remove();
-      //     console.log("fourth stand source");
-      //     $(senderDivElementID).prepend(waitGif);
-      //     $(senderDivElementID).css("z-index",oldZIndex);
-      //   }, 5000);
-        /* Listen for a transition! */
-        //this fires at the end of an animation, to turn the bear from walking to standing
-
-        var animationEvent = whichAnimationEvent('animation_you_div');
-        console.log("animationEvent", animationEvent);
-        document.addEventListener(animationEvent, function() {
-          animationListener(animationEvent, 'animation_you_div', reverseExtension);
-          document.removeEventListener(animationEvent, arguments.callee);
-        });
-
+      var curx = $(senderDivElementID).position().left;
+      var cury = $(senderDivElementID).position().top;
+      setTimeout(function(){
+          // Return to normal waiting pose after 5 sec
+          // if (notMoving) {
+            if (curx == $(senderDivElementID).position().left && cury == $(senderDivElementID).position().top) {
+                  $(senderDivElementID).children("img").remove();
+                  console.log("fourth stand source");
+                  $(senderDivElementID).prepend(waitGif);
+                  $(senderDivElementID).css("z-index",oldZIndex);
+         }
+        }, 5000);
     }
 
     // To move receiver bear (left bear) after firebase receival of message
     function moveToCoordinates(senderDivElementID, x, y) {
+            // notMoving = false;
       console.log("POS OF 'YOU' BEAR (" + x + ", " + y + ")");
       var imgID = senderDivElementID == "#animation_you_div" ? "animation_you" : "animation_me";
       var bear = document.querySelector(senderDivElementID);
@@ -279,12 +277,20 @@ function login(uid) {
       var walkGif = "<img src='bear_walk"+reverseExtension+".gif' id='"+imgID+"' >";
       $(senderDivElementID).children("img").remove();
       $(senderDivElementID).prepend(walkGif);
-      setTimeout(function(){
-        console.log("third stand source");
-        var waitGif = "<img src='bear_stand"+reverseExtension+".gif' id='"+imgID+"' >";
-        $(senderDivElementID).children("img").remove();
-        $(senderDivElementID).prepend(waitGif);
-      }, 1500);
+      // setTimeout(function(){
+      //   console.log("third stand source");
+      //   var waitGif = "<img src='bear_stand"+reverseExtension+".gif' id='"+imgID+"' >";
+      //   $(senderDivElementID).children("img").remove();
+      //   $(senderDivElementID).prepend(waitGif);
+      // }, 1500);
+
+        var animationEvent = whichAnimationEvent('animation_you_div');
+        console.log("animationEvent", animationEvent);
+        document.addEventListener(animationEvent, function() {
+          animationListener(animationEvent, 'animation_you_div', reverseExtension);
+          document.removeEventListener(animationEvent, arguments.callee);
+        });
+
       bear.style.left = x + "px"; // (x + bearCenterPosition.x) + "px";
       bear.style.top = y + "px"; //  (y + bearCenterPosition.y) + "px";
     }
@@ -314,6 +320,7 @@ function login(uid) {
 
 
     function moveBearToClickPosition(e) {
+      // notMoving = false;
       var parentPosition = getPosition(e.currentTarget);
       var xPosition = e.clientX - parentPosition.x - (meBear.clientWidth / 2);
       var yPosition = e.clientY - parentPosition.y - (meBear.clientHeight / 2);
@@ -367,6 +374,7 @@ function login(uid) {
           var waitGif = "<img src='bear_stand"+reverseExtension+".gif' id='animation_me' >";
           $('#animation_me_div').children("img").remove();
           $('#animation_me_div').prepend(waitGif);
+          // notMoving = true;
           document.removeEventListener(e, animationListener);
         }
 
