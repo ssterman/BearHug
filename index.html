@@ -295,7 +295,7 @@ toggle_enable_buttons(true); // re-enable buttons;
         var animationEvent = whichAnimationEvent('animation_you_div');
         console.log("animationEvent", animationEvent);
         document.addEventListener(animationEvent, function() {
-          animationListener(animationEvent, 'animation_you_div', reverseExtension);
+          animationListener(animationEvent, '#animation_you_div', reverseExtension);
           document.removeEventListener(animationEvent, arguments.callee);
         });
 
@@ -364,7 +364,8 @@ toggle_enable_buttons(true); // re-enable buttons;
         var animationEvent = whichAnimationEvent('animation_me_div');
         console.log("animationEvent", animationEvent);
         document.addEventListener(animationEvent, function() {
-          animationListener(animationEvent, 'animation_me_div', reverseExtension);
+          animationListener(animationEvent, '#animation_me_div', reverseExtension);
+          console.log("removing Event Listener");
           document.removeEventListener(animationEvent, arguments.callee);
         });
 
@@ -376,10 +377,12 @@ toggle_enable_buttons(true); // re-enable buttons;
       function animationListener(e, div, reverseExtension) {
           console.log('Transition complete! This is the callback, no library needed!');
           var waitGif = "<img src='bear_stand"+reverseExtension+".gif' id='animation_me' >";
+          console.log("reverseExtension", reverseExtension);
           $(div).children("img").remove();
+          console.log($(div));
           $(div).prepend(waitGif);
           // notMoving = true;
-          document.removeEventListener(e, animationListener);
+        //  document.removeEventListener(e, animationListener);
         }
 
       /* From Modernizr */
