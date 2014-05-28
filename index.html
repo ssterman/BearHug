@@ -12,7 +12,11 @@
   <div id="login_container">
     <div><h1>Welcome to BearHug!</h1></div><br>
     <div> Please enter your unique ID: <input type="text" id="roomID">
-     <input type="Submit" onclick="login()">
+      <p> Please choose your avatar: 
+        <input type="radio" id="avatarType0" name="avatarType" value="1"><img class="gifThumbnail" src="bear_stand.gif">
+        <input type="radio" id="avatarType1" name="avatarType" value="2"><img class="gifThumbnail" src="bear_stand.gif">
+        </p>
+     <button type="Submit" onclick="login()">Enter the Chat</button>
    </div>
  </div>
 
@@ -58,9 +62,22 @@
 
 var fb_chat_room;
 
+//this lets you support multiple avatars
+var my_avatar_type = 0; //initial default values
+var your_avatar_type = 0;
+var avatar_type_prefix = ["bear_", "bear2_"];
+
 function login(uid) {
   var roomname = 'cs247' + document.getElementById("roomID").value;
-  console.log(roomname);
+ 
+  //record the chosen avatar type
+  if (document.getElementById("avatarType0").checked) {
+    my_avatar_type = 0;
+  } else if (document.getElementById("avatarType1").checked) {
+    my_avatar_type = 1;
+  } //if they don't choose one, it remains at the default set above
+  
+
   document.getElementById("application_container").style.display = "inline";
   document.getElementById("login_container").style.display = "none";
 
@@ -88,8 +105,11 @@ function login(uid) {
         var msg = snapshot.val().m;
         if (msg) {
 
-          if (msg == "newMember") {
+          //moves bears back to starting position 
+          //and determines the value of the other bear
+          if (msg.indexOf("newMember") != -1) {
             resetBears();
+            your_avatar_type = msg.substring(msg.indexOf("_") + 1, msg.length);
           }
           //this makes it so that old messages don't get replayed if entering the same chatroom
           //currently on a three second window; can change that as needed
@@ -125,7 +145,7 @@ function login(uid) {
 
       //fb_chat_room.push({r: roomname});
      // toggle_enable_buttons(true);
-      fb_chat_room.push({m: "newMember", sender: userID, timestamp: Date.now()});
+      fb_chat_room.push({m: "newMember_" + my_avatar_type, sender: userID, timestamp: Date.now()});
    }
 
    function resetBears() {
@@ -170,22 +190,15 @@ function login(uid) {
       // bonus: do cool popup animation
     }
 
-    // var notMoving = true;
-
-    // FUNCTION INTERACT
-    // params:
-    // * interactionType eg. "hug" and who sent the hug aka which DIV does the hugging action eg. animation_you_div
-    // interactionType is a string either "hug" "pat" or "kiss"
-    // * senderDivElement ID: either 'animation_me_div' or 'animation_you_div' div that holds the animated bear
-    // * reversed: if bear is reversed (facing left) or normal (facing right)
-    // * senderIsMe: did you send this interaction (right bear) or are you the receiver of it (left bear)
     function interact(interactionType, senderDivElementID, reversed, senderIsMe) {
       console.log("INTERACTING...");
       var reverseExtension = reversed ? "_reversed" : "";
       var imgID = senderIsMe ? "animation_me" : "animation_you";
+      var avatar_prefix = senderIsMe ? avatar_type_prefix[my_avatar_type] : avatar_type_prefix[your_avatar_type];
+
       console.log("second stand source");
-      var waitGif = "<img src='bear_stand"+reverseExtension+".gif' id='"+imgID+"' >";
-      var newGif = "<img src='bear_"+interactionType+reverseExtension+".gif' id='"+imgID+"' >";
+      var waitGif = "<img src='"+ avatar_prefix + "stand"+reverseExtension+".gif' id='"+imgID+"' >";
+      var newGif = "<img src='"+ avatar_prefix + interactionType+reverseExtension+".gif' id='"+imgID+"' >";
       $(senderDivElementID).children("img").remove();
       $(senderDivElementID).prepend(newGif);
       var oldZIndex = $(senderDivElementID).css("z-index");
@@ -210,13 +223,20 @@ function login(uid) {
     function moveToCoordinates(senderDivElementID, x, y) {
             // notMoving = false;
       console.log("POS OF 'YOU' BEAR (" + x + ", " + y + ")");
+
+
       var imgID = senderDivElementID == "#animation_you_div" ? "animation_you" : "animation_me";
+
+
+      var avatar_prefix = senderDivElementID == "#animation_you_div" ? avatar_type_prefix[your_avatar_type] : avatar_type_prefix[my_avatar_type];
+
+
       var bear = document.querySelector(senderDivElementID);
       var container = document.querySelector("#animationContainer");
       var bearCenterPosition = getCenterCoords($(senderDivElementID));
       var reversed = bearCenterPosition.x > x;
       var reverseExtension = reversed ? "_reversed" : "";
-      var walkGif = "<img src='bear_walk"+reverseExtension+".gif' id='"+imgID+"' >";
+      var walkGif = "<img src='"+ avatar_prefix + "walk"+reverseExtension+".gif' id='"+imgID+"' >";
       $(senderDivElementID).children("img").remove();
       $(senderDivElementID).prepend(walkGif);
       // setTimeout(function(){
@@ -281,13 +301,9 @@ function login(uid) {
         var bearCenterPosition = getCenterCoords($('#animation_me_div'));
         var reversed = bearCenterPosition.x > e.clientX;
 
-        console.log("YOOOOO");
-        console.log(bearCenterPosition.x, e.clientX);
-
-
         var reverseExtension = reversed ? "_reversed" : "";
         console.log("walk source");
-        var walkGif = "<img src='bear_walk"+reverseExtension+".gif' id='animation_me' >";
+        var walkGif = "<img src='"+ avatar_type_prefix[my_avatar_type]+ "walk"+reverseExtension+".gif' id='animation_me' >";
         $('#animation_me_div').children("img").remove();
         $('#animation_me_div').prepend(walkGif);
         //put this back in
@@ -311,7 +327,8 @@ function login(uid) {
 
       function animationListener(e, div, reverseExtension) {
           console.log('Transition complete! This is the callback, no library needed!');
-          var waitGif = "<img src='bear_stand"+reverseExtension+".gif' id='animation_me' >";
+
+          var waitGif = "<img src='"+ avatar_type_prefix[my_avatar_type]+"stand"+reverseExtension+".gif' id='animation_me' >";
           console.log("reverseExtension", reverseExtension);
           $(div).children("img").remove();
           console.log($(div));
