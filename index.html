@@ -445,11 +445,20 @@ function login(uid) {
 
           // PUSH TO FIREBASE SO YOU BEAR MOVES FOR OTHER USER
           fb_chat_room.push({m: "keystroke_displace", cssProp: myCssProp, offset: myMirrorOffset, activateAnimation: !keyAlreadyPressing, sender: userID, timestamp: Date.now()});
-
+          // if first key press, make sure to swtich animation to WALKING BEAR + check directionality REVERSE OR NOT
           if (!keyAlreadyPressing) {          
             var innerHTML = bearDiv.html();
-            var reversed = innerHTML.match(/reversed/) == "reversed";
-            var reverseExtension = reversed ? "_reversed" : "";
+            var isCurrentlyReversed = innerHTML.match(/reversed/) == "reversed";
+            var needsReverseExtension = false;
+            // up down doesn't change bear reversal
+            if (e.which == 38 || e.which == 40) {
+              needsReverseExtension = isCurrentlyReversed;
+            } else if (e.which == 37) { // bear goes left which means reversed
+              needsReverseExtension = true;
+            } else  { // e.which == 39 bear goes right which means not reversed
+              needsReverseExtension = false;
+            }
+            var reverseExtension = needsReverseExtension ? "_reversed" : "";
             var walkGif = "<img src='"+ avatar_type_prefix[my_avatar_type]+"walk"+reverseExtension+".gif' id='animation_me' >";
             bearDiv.children("img").remove();
             bearDiv.prepend(walkGif);
