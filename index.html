@@ -160,82 +160,6 @@ function login(uid) {
       fb_chat_room.push({m: msg, sender: userID, timestamp: Date.now()});
     }
 
-    // NOW STALE: THIS WAS ANIMATION CHOREOGRAPHED FOR 1D linear movement
-    /*
-function animate(senderIsMe, interactionType) {
-// disable buttons for receiver too
-
-// if (!senderIsMe) {
-// toggle_enable_buttons(false);
-// }
-// hideButtons();
-
-console.log("walking");
-var container = document.getElementById("animationContainer");
-var me = document.getElementById("animation_me");
-var you = document.getElementById("animation_you");
-var myLeftOffset = $("#animation_me_div").offset().left;
-var yourLeftOffset = $("#animation_you_div").offset().left;
-if (senderIsMe) {
-// send the action giver to the front, receiver to the back
-console.log("z-index setting");
-$('#animation_me_div').css('z-index', 9999);
-$('#animation_you_div').css('z-index', 1);
-console.log("I am sender");
-var senderDivElementID = '#animation_me_div';
-var displacement = yourLeftOffset-myLeftOffset;
-displacement = (displacement < 0) ? displacement+25 : displacement-25;
-var reversed = true;
-} else { // sender is the other person
-// send the action giver to the front, receiver to the back
-console.log("other z-index setting");
-$('#animation_you_div').css('z-index', 9999);
-$('#animation_me_div').css('z-index', 1);
-console.log("I am receiver");
-var senderDivElementID = '#animation_you_div';
-var displacement = myLeftOffset-yourLeftOffset;
-displacement = (displacement < 0) ? displacement+25 : displacement-25;
-var reversed = false;
-}
-console.log("Displacement: " + displacement);
-var reverseExtension = reversed ? "_reversed" : "";
-move(senderDivElementID)
-.set('margin-left', displacement)
-.duration('5s')
-// .then()
-// .scale(1.5)
-// .pop()
-.end();
-var newGif = "<img src='bear_walk"+reverseExtension+".gif'>";
-$(senderDivElementID).children("img").remove();
-$(senderDivElementID).prepend(newGif);
-
-interact(interactionType, senderDivElementID, reversed);
-
-setTimeout(function(){
-// flip bear other way
-move(senderDivElementID)
-.set('margin-left', 0)
-.duration('5s')
-.end();
-
-var reverseExtension = reversed ? "" : "_reversed";
-var newGif = "<img src='bear_walk"+reverseExtension+".gif' id='animation_me' >";
-$(senderDivElementID).children("img").remove();
-$(senderDivElementID).prepend(newGif);
-setTimeout(function(){
-var reverseExtension = reversed ? "_reversed" : "";
-var newGif = "<img src='bear_stand"+reverseExtension+".gif' id='animation_me' >";
-$(senderDivElementID).children("img").remove();
-$(senderDivElementID).prepend(newGif);
-
-toggle_enable_buttons(true); // re-enable buttons;
-}, 5000);
-}, 9000);
-// Right now just x-axis, but changing it to 2D path should be easy
-}
-*/
-
     function showButtons() {
       $('#buttonContainer').show();
       // bonus: do cool popup animation
@@ -438,6 +362,33 @@ toggle_enable_buttons(true); // re-enable buttons;
       var centerY = offset.top + height / 2;
       return {x: centerX, y: centerX};
     }
+
+
+
+    var bearDiv = $('#animation_me_div');
+    $(document).keydown(function(e) {
+      switch (e.which) {
+      case 37:
+          bearDiv.css('left', bearDiv.offset().left - 10);
+          break;
+      case 38:
+          bearDiv.css('top', bearDiv.offset().top - 10);
+          break;
+      case 39:
+          bearDiv.css('left', bearDiv.offset().left + 10);
+          break;
+      case 40:
+          bearDiv.css('top', bearDiv.offset().top + 10);
+          break;
+      }
+    })
+
+
+
+
+
+
+
     </script>
   </body>
 </html>
