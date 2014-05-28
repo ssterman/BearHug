@@ -87,6 +87,10 @@ function login(uid) {
       fb_chat_room.on('child_added', function(snapshot){
         var msg = snapshot.val().m;
         if (msg) {
+
+          if (msg == "newMember") {
+            resetBears();
+          }
           //this makes it so that old messages don't get replayed if entering the same chatroom
           //currently on a three second window; can change that as needed
           var timeDifference = Date.now() - snapshot.val().timestamp;
@@ -121,7 +125,14 @@ function login(uid) {
 
       //fb_chat_room.push({r: roomname});
      // toggle_enable_buttons(true);
+      fb_chat_room.push({m: "newMember", sender: userID, timestamp: Date.now()});
+   }
 
+   function resetBears() {
+      $("#animation_you_div").css("left", "0px");
+      $("#animation_me_div").css("left", "920px");
+      $("#animation_me_div").css("top", "300px");
+      $("#animation_you_div").css("top", "300px");
    }
 
 
