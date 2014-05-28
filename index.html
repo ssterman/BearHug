@@ -139,7 +139,7 @@ function login(uid) {
                        var reversed = innerHTML.match(/reversed/) == "reversed";
                        reverseExtension = reversed ? "_reversed" : "";
                   }
-                  var walkGif = "<img src='"+ avatar_type_prefix[my_avatar_type]+"walk"+reverseExtension+".gif' id='animation_me' >";
+                  var walkGif = "<img src='"+ avatar_type_prefix[your_avatar_type]+"walk"+reverseExtension+".gif' id='animation_you' >";
                   otherBearDiv.children("img").remove();
                   otherBearDiv.prepend(walkGif);
                 }
@@ -151,7 +151,7 @@ function login(uid) {
                 var innerHTML = otherBearDiv.html();
                 var reversed = innerHTML.match(/reversed/) == "reversed";
                 var reverseExtension = reversed ? "_reversed" : "";
-                var walkGif = "<img src='"+ avatar_type_prefix[my_avatar_type]+"stand"+reverseExtension+".gif' id='animation_me' >";
+                var walkGif = "<img src='"+ avatar_type_prefix[your_avatar_type]+"stand"+reverseExtension+".gif' id='animation_you' >";
                 otherBearDiv.children("img").remove();
                 otherBearDiv.prepend(walkGif);
               }
