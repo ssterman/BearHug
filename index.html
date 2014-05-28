@@ -122,17 +122,23 @@ function login(uid) {
             console.log("RECEIVED: " + msg);
             console.log("SENDER IS ME: " + senderIsMe);
             
-            // Animate gesture for sender or walk to x-y coord.
+            // Animate gesture for sender or walk to x-y coord for KEYSTROKE arrows
             if (msg == "keystroke_displace") {
               if (!senderIsMe) {
                 console.log(otherBearDiv);
                 // PUSH has snapshot value activateAnimation that says whether or not to switch GIF from stand to walk
                 // true is keypressed first time, false if holding key for a while 
                 if (snapshot.val().activateAnimation) {
+                  console.log("ACTIVATE ANIMATION");
                   // TODO: This really needs to be factored out into helper function TODO
-                  var innerHTML = otherBearDiv.html();
-                  var reversed = innerHTML.match(/reversed/) == "reversed";
-                  var reverseExtension = reversed ? "_reversed" : "";
+                  var reverseExtension = snapshot.val().reverseExt;
+                  console.log("REVERSE EXT: " + reverseExtension);
+                  if (reverseExtension == "none") {
+
+                       var innerHTML = otherBearDiv.html();
+                       var reversed = innerHTML.match(/reversed/) == "reversed";
+                       reverseExtension = reversed ? "_reversed" : "";
+                  }
                   var walkGif = "<img src='"+ avatar_type_prefix[my_avatar_type]+"walk"+reverseExtension+".gif' id='animation_me' >";
                   otherBearDiv.children("img").remove();
                   otherBearDiv.prepend(walkGif);
@@ -149,6 +155,7 @@ function login(uid) {
                 otherBearDiv.children("img").remove();
                 otherBearDiv.prepend(walkGif);
               }
+            // Animate gesture for sender or walk to x-y coord for MOUSE CLICKS
             } else if (msg == "walk" && !senderIsMe) { // animate YOU bear walking
                 moveToCoordinates('#animation_you_div', snapshot.val().x, snapshot.val().y);
             } else if (senderIsMe) { // animate ME bear gesture
@@ -443,8 +450,6 @@ function login(uid) {
           e.preventDefault();
           takeAStep(bearDiv, myCssProp, myOffset);
 
-          // PUSH TO FIREBASE SO YOU BEAR MOVES FOR OTHER USER
-          fb_chat_room.push({m: "keystroke_displace", cssProp: myCssProp, offset: myMirrorOffset, activateAnimation: !keyAlreadyPressing, sender: userID, timestamp: Date.now()});
           // if first key press, make sure to swtich animation to WALKING BEAR + check directionality REVERSE OR NOT
           if (!keyAlreadyPressing) {          
             var innerHTML = bearDiv.html();
@@ -459,10 +464,23 @@ function login(uid) {
               needsReverseExtension = false;
             }
             var reverseExtension = needsReverseExtension ? "_reversed" : "";
+            var mirrorReverseExt = needsReverseExtension ? "" : "_reversed" ;
             var walkGif = "<img src='"+ avatar_type_prefix[my_avatar_type]+"walk"+reverseExtension+".gif' id='animation_me' >";
             bearDiv.children("img").remove();
             bearDiv.prepend(walkGif);
           }
+          if (mirrorReverseExt == undefined || mirrorReverseExt == null) {
+            if (e.which == 37) {
+              mirrorReverseExt = "";
+            } else if (e.which == 39) {
+              mirrorReverseExt = "_reversed";
+            } else {
+              mirrorReverseExt = "none";
+            }
+          } 
+          // PUSH TO FIREBASE SO YOU BEAR MOVES FOR OTHER USER
+          fb_chat_room.push({m: "keystroke_displace", cssProp: myCssProp, offset: myMirrorOffset, activateAnimation: !keyAlreadyPressing, reverseExt: mirrorReverseExt, sender: userID, timestamp: Date.now()});
+
           keyAlreadyPressing = true;
       }
 
