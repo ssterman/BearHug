@@ -67,6 +67,9 @@ var my_avatar_type = 0; //initial default values
 var your_avatar_type = 0;
 var avatar_type_prefix = ["bear_", "bear2_"];
 
+var bearDiv = $('#animation_me_div');
+var otherBearDiv = $('#animation_you_div');
+
 function login(uid) {
   var roomname = 'cs247' + document.getElementById("roomID").value;
  
@@ -120,7 +123,33 @@ function login(uid) {
             console.log("SENDER IS ME: " + senderIsMe);
             
             // Animate gesture for sender or walk to x-y coord.
-            if (msg == "walk" && !senderIsMe) { // animate YOU bear walking
+            if (msg == "keystroke_displace") {
+              if (!senderIsMe) {
+                console.log(otherBearDiv);
+                // PUSH has snapshot value activateAnimation that says whether or not to switch GIF from stand to walk
+                // true is keypressed first time, false if holding key for a while 
+                if (snapshot.val().activateAnimation) {
+                  // TODO: This really needs to be factored out into helper function TODO
+                  var innerHTML = otherBearDiv.html();
+                  var reversed = innerHTML.match(/reversed/) == "reversed";
+                  var reverseExtension = reversed ? "_reversed" : "";
+                  var walkGif = "<img src='"+ avatar_type_prefix[my_avatar_type]+"walk"+reverseExtension+".gif' id='animation_me' >";
+                  otherBearDiv.children("img").remove();
+                  otherBearDiv.prepend(walkGif);
+                }
+                takeAStep(otherBearDiv, snapshot.val().cssProp, snapshot.val().offset);
+              }
+            } else if (msg = "stop_walk") {
+              // End walking animation by switching gif to standing
+              if (!senderIsMe) {
+                var innerHTML = otherBearDiv.html();
+                var reversed = innerHTML.match(/reversed/) == "reversed";
+                var reverseExtension = reversed ? "_reversed" : "";
+                var walkGif = "<img src='"+ avatar_type_prefix[my_avatar_type]+"stand"+reverseExtension+".gif' id='animation_me' >";
+                otherBearDiv.children("img").remove();
+                otherBearDiv.prepend(walkGif);
+              }
+            } else if (msg == "walk" && !senderIsMe) { // animate YOU bear walking
                 moveToCoordinates('#animation_you_div', snapshot.val().x, snapshot.val().y);
             } else if (senderIsMe) { // animate ME bear gesture
               var senderDivElementID = '#animation_me_div';
@@ -380,31 +409,72 @@ function login(uid) {
       return {x: centerX, y: centerX};
     }
 
+    var keyAlreadyPressing = false;
 
-
-    var bearDiv = $('#animation_me_div');
     $(document).keydown(function(e) {
-      console.log(bearDiv.offset());
+      var myCssProp = "left";
+      var myOffset = 0;
+      var myMirrorOffset = 0;
       switch (e.which) {
         case 37:
-            e.preventDefault();
-            takeAStep(bearDiv, "left", -3);
+            myCssProp = "left"
+            myOffset = -3;
+            // mirrored displacement for YOU bear for other user
+            myMirrorOffset = +3;
             break;
         case 38:
-            e.preventDefault();
-            takeAStep(bearDiv, "top", -3);
+            myCssProp = "top"
+            myOffset = -3;
+            myMirrorOffset = -3;
             break;
         case 39:
-            e.preventDefault();
-            takeAStep(bearDiv, "left", +3);
+            myCssProp = "left"
+            myOffset = +3;
+            myMirrorOffset = -3;
             break;
         case 40:
-            e.preventDefault();
-            takeAStep(bearDiv, "top", +3);
+            myCssProp = "top"
+            myOffset = +3;
+            myMirrorOffset = +3;
             break;
       }
 
-    })
+      if (e.which == 37 || e.which == 38 || e.which == 39 || e.which == 40) {
+          e.preventDefault();
+          takeAStep(bearDiv, myCssProp, myOffset);
+
+          // PUSH TO FIREBASE SO YOU BEAR MOVES FOR OTHER USER
+          fb_chat_room.push({m: "keystroke_displace", cssProp: myCssProp, offset: myMirrorOffset, activateAnimation: !keyAlreadyPressing, sender: userID, timestamp: Date.now()});
+
+          if (!keyAlreadyPressing) {          
+            var innerHTML = bearDiv.html();
+            var reversed = innerHTML.match(/reversed/) == "reversed";
+            var reverseExtension = reversed ? "_reversed" : "";
+            var walkGif = "<img src='"+ avatar_type_prefix[my_avatar_type]+"walk"+reverseExtension+".gif' id='animation_me' >";
+            bearDiv.children("img").remove();
+            bearDiv.prepend(walkGif);
+          }
+          keyAlreadyPressing = true;
+      }
+
+
+    });
+
+    $(document).keyup(function(e) {
+      if (e.which == 37 || e.which == 38 || e.which == 39 || e.which == 40) {
+          keyAlreadyPressing = false;
+          e.preventDefault();
+          var innerHTML = bearDiv.html();
+          var reversed = innerHTML.match(/reversed/) == "reversed";
+          var reverseExtension = reversed ? "_reversed" : "";
+          var walkGif = "<img src='"+ avatar_type_prefix[my_avatar_type]+"stand"+reverseExtension+".gif' id='animation_me' >";
+          bearDiv.children("img").remove();
+          bearDiv.prepend(walkGif);
+
+          // PUSH TO FIREBASE SO YOU BEAR ENDS WALKING ANIMATION
+          fb_chat_room.push({m: "stop_walk", sender: userID, timestamp: Date.now()});
+      }
+    });
 
     // Bear takes a step (3 px)
     // Prevents CSS transition animation + prevents default move scrollbar for webpage 
@@ -413,7 +483,7 @@ function login(uid) {
     function takeAStep(element, cssProperty, offset) {
       element.addClass('notransition'); // Disable transitions
         var offset = parseInt(element.css(cssProperty)) + offset;
-        bearDiv.css(cssProperty, offset + "px");
+        element.css(cssProperty, offset + "px");
         console.log(cssProperty + " " + offset);
         element[0].offsetHeight; // Trigger a reflow, flushing the CSS changes
         // see http://stackoverflow.com/questions/11131875/what-is-the-cleanest-way-to-disable-css-transition-effects-temporarily
