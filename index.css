@@ -190,3 +190,7 @@ img.button {
 	z-index: 1;
 	transition: left 1.5s ease-in, top 1.5s ease-in;
 }
+
+.gifThumbnail {
+	height: 90px;
+}
