@@ -14,7 +14,7 @@
     <div> Please enter your unique ID: <input type="text" id="roomID">
       <p> Please choose your avatar: 
         <input type="radio" id="avatarType0" name="avatarType" value="1"><img class="gifThumbnail" src="bear_stand.gif">
-        <input type="radio" id="avatarType1" name="avatarType" value="2"><img class="gifThumbnail" src="bear_stand.gif">
+        <input type="radio" id="avatarType1" name="avatarType" value="2"><img class="gifThumbnail" src="bear2_stand.gif">
         </p>
      <button type="Submit" onclick="login()">Enter the Chat</button>
    </div>
@@ -422,9 +422,11 @@ function login(uid) {
       var myCssProp = "left";
       var myOffset = 0;
       var myMirrorOffset = 0;
+      var speed = 10;
       switch (e.which) {
         case 37:
             myCssProp = "left"
+<<<<<<< HEAD
             myOffset = -5;
             // mirrored displacement for YOU bear for other user
             myMirrorOffset = +5;
@@ -443,6 +445,26 @@ function login(uid) {
             myCssProp = "top"
             myOffset = +5;
             myMirrorOffset = +5;
+=======
+            myOffset = -1*speed;
+            // mirrored displacement for YOU bear for other user
+            myMirrorOffset = speed;
+            break;
+        case 38:
+            myCssProp = "top"
+            myOffset = -1*speed;
+            myMirrorOffset = -1*speed;
+            break;
+        case 39:
+            myCssProp = "left"
+            myOffset = speed;
+            myMirrorOffset = -1*speed;
+            break;
+        case 40:
+            myCssProp = "top"
+            myOffset = speed;
+            myMirrorOffset = speed;
+>>>>>>> aa30d861ab0514e431ccc16f67e08d796a860112
             break;
       }
 

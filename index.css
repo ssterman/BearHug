@@ -124,7 +124,7 @@ img.button {
 	/*display:inline-block;*/
 	width: 150px;
 	height: 45px;
-	margin-top: -250px;
+	margin-top: -220px;
 	visibility: hidden;
 }
 
@@ -198,6 +198,10 @@ img.button {
   -ms-transition: none !important;
   transition: none !important;
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> aa30d861ab0514e431ccc16f67e08d796a860112
 
 .gifThumbnail {
 	height: 90px;
