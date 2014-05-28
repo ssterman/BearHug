@@ -157,7 +157,7 @@ img.button {
 
 #animation_me_wrapper {
 	top: 250px;
-	left: 920px;
+	left: 0px;
 	position: relative;
 }
 
@@ -171,7 +171,7 @@ img.button {
 
 #animation_me_div {
 	top: 300px;
-	left: 920px;
+	left: 880px;
 	position: absolute;
 	width: 120px;
 	/*overflow: auto;*/
