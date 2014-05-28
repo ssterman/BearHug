@@ -139,7 +139,7 @@ function login(uid) {
                 }
                 takeAStep(otherBearDiv, snapshot.val().cssProp, snapshot.val().offset);
               }
-            } else if (msg = "stop_walk") {
+            } else if (msg == "stop_walk") {
               // End walking animation by switching gif to standing
               if (!senderIsMe) {
                 var innerHTML = otherBearDiv.html();
