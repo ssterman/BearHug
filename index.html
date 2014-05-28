@@ -367,22 +367,41 @@ function login(uid) {
 
     var bearDiv = $('#animation_me_div');
     $(document).keydown(function(e) {
+      console.log(bearDiv.offset());
       switch (e.which) {
-      case 37:
-          bearDiv.css('left', bearDiv.offset().left - 10);
-          break;
-      case 38:
-          bearDiv.css('top', bearDiv.offset().top - 10);
-          break;
-      case 39:
-          bearDiv.css('left', bearDiv.offset().left + 10);
-          break;
-      case 40:
-          bearDiv.css('top', bearDiv.offset().top + 10);
-          break;
+        case 37:
+            e.preventDefault();
+            takeAStep(bearDiv, "left", -3);
+            break;
+        case 38:
+            e.preventDefault();
+            takeAStep(bearDiv, "top", -3);
+            break;
+        case 39:
+            e.preventDefault();
+            takeAStep(bearDiv, "left", +3);
+            break;
+        case 40:
+            e.preventDefault();
+            takeAStep(bearDiv, "top", +3);
+            break;
       }
+
     })
 
+    // Bear takes a step (3 px)
+    // Prevents CSS transition animation + prevents default move scrollbar for webpage 
+    // when you want to control bear
+    // eg. takeAStep($('#animation_me_div'), "left", 3);
+    function takeAStep(element, cssProperty, offset) {
+      element.addClass('notransition'); // Disable transitions
+        var offset = parseInt(element.css(cssProperty)) + offset;
+        bearDiv.css(cssProperty, offset + "px");
+        console.log(cssProperty + " " + offset);
+        element[0].offsetHeight; // Trigger a reflow, flushing the CSS changes
+        // see http://stackoverflow.com/questions/11131875/what-is-the-cleanest-way-to-disable-css-transition-effects-temporarily
+      element.removeClass('notransition');
+    }
 
 
 

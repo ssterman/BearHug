@@ -107,7 +107,7 @@ img.button {
 }
 
 #animationContainer {
-	position: absolute;
+	position: relative;
 	/*top: 300px;*/
 	height: 700px;
 	width: 1000px;
@@ -172,7 +172,7 @@ img.button {
 #animation_me_div {
 	top: 300px;
 	left: 920px;
-	position: relative;
+	position: absolute;
 	width: 120px;
 	/*overflow: auto;*/
 	max-height: 250px;
@@ -184,9 +184,17 @@ img.button {
 #animation_you_div {
 	width: 120px;
 	height: 180px;
-	position: relative;
+	position: absolute;
 	top: 300px;
 	left: 0px;
 	z-index: 1;
 	transition: left 1.5s ease-in, top 1.5s ease-in;
+}
+
+.notransition {
+  -webkit-transition: none !important;
+  -moz-transition: none !important;
+  -o-transition: none !important;
+  -ms-transition: none !important;
+  transition: none !important;
 }
