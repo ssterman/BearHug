@@ -9,6 +9,7 @@ body {
 	position: absolute;
 	left: 25%;
 	top: 150px;
+	width: 500px;
 	background-color: white;
 	padding: 50px;
 	text-align: center;
@@ -124,7 +125,7 @@ img.button {
 	/*display:inline-block;*/
 	width: 150px;
 	height: 45px;
-	margin-top: -220px;
+	margin-top: -240px;
 	visibility: hidden;
 }
 
@@ -200,5 +201,5 @@ img.button {
 }
 
 .gifThumbnail {
-	height: 90px;
+	height: 200px;
 }
