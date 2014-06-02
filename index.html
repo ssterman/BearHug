@@ -101,7 +101,7 @@ function login(uid) {
 
       //firebase setup
 
-      fb_chat_room = new Firebase ("https://test-for-cs247.firebaseio.com/chatrooms/" + roomname);
+      fb_chat_room = new Firebase ("https://bearhug.firebaseio.com/chatrooms/" + roomname);
       console.log("Fb_chat_room", fb_chat_room);
 
       fb_chat_room.on('child_added', function(snapshot){
