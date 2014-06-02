@@ -286,7 +286,7 @@ function login(uid) {
         var animationEvent = whichAnimationEvent('animation_you_div');
         console.log("animationEvent", animationEvent);
         document.addEventListener(animationEvent, function() {
-          animationListener(animationEvent, '#animation_you_div', reverseExtension);
+          animationListener(animationEvent, '#animation_you_div', reverseExtension, avatar_prefix);
           document.removeEventListener(animationEvent, arguments.callee);
         });
 
@@ -351,7 +351,7 @@ function login(uid) {
         var animationEvent = whichAnimationEvent('animation_me_div');
         console.log("animationEvent", animationEvent);
         document.addEventListener(animationEvent, function() {
-          animationListener(animationEvent, '#animation_me_div', reverseExtension);
+          animationListener(animationEvent, '#animation_me_div', reverseExtension, avatar_type_prefix[my_avatar_type]);
           console.log("removing Event Listener");
           document.removeEventListener(animationEvent, arguments.callee);
         });
@@ -361,10 +361,10 @@ function login(uid) {
 
       }
 
-      function animationListener(e, div, reverseExtension) {
+      function animationListener(e, div, reverseExtension, prefix) {
           console.log('Transition complete! This is the callback, no library needed!');
 
-          var waitGif = "<img src='"+ avatar_type_prefix[my_avatar_type]+"stand"+reverseExtension+".gif' id='animation_me' >";
+          var waitGif = "<img src='"+ prefix +"stand"+reverseExtension+".gif' id='animation_me' >";
           console.log("reverseExtension", reverseExtension);
           $(div).children("img").remove();
           console.log($(div));
