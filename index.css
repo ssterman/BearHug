@@ -203,3 +203,19 @@ img.button {
 .gifThumbnail {
 	height: 200px;
 }
+
+.circle{
+	width:15px;
+	height:15px;
+	border-radius:50px;
+	line-height:100px;
+}
+
+#target_mark {
+	height: 35px;
+	width: 35px;
+	background-color: red;
+	opacity: .7;
+	display: none;
+	position: absolute;
+}

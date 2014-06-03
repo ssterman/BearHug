@@ -20,6 +20,7 @@
    </div>
  </div>
 
+
  <div id="application_container">
   <div class="header">
     <h1> BearHug </h1>
@@ -36,6 +37,8 @@
    </div>
 
    <div id="animationContainer">
+    <div id="target_mark" class="circle"></div>
+
     <div id="animation_me_div" class="avatar" onmouseover="showButtons()" onmouseout="hideButtons()">
       <img id="animation_me" src="bear_stand_reversed.gif" >
     <!--  <div id="buttonContainerPH"></div>-->
@@ -157,6 +160,13 @@ function login(uid) {
               }
             // Animate gesture for sender or walk to x-y coord for MOUSE CLICKS
             } else if (msg == "walk" && !senderIsMe) { // animate YOU bear walking
+
+                console.log("marking");
+                $("#target_mark").css({"top": snapshot.val().y + 40, "left": snapshot.val().x + 40});
+                $("#target_mark").show();
+                $("#target_mark" ).fadeOut( 1500 );
+
+
                 moveToCoordinates('#animation_you_div', snapshot.val().x, snapshot.val().y);
             } else if (senderIsMe) { // animate ME bear gesture
               var senderDivElementID = '#animation_me_div';
